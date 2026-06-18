@@ -495,7 +495,7 @@
   "use strict";
 
   // ── CONFIG ────────────────────────────────────────────────────────────────
-  var APPS_SCRIPT_URL = 'COLLE_ICI_TON_URL_APPS_SCRIPT';
+  var APPS_SCRIPT_URL = '1w4xgyq97TmkgsmftM7yFmGL21_deg5azNgEnc-5FKEY';
 
   // ── Données AM ────────────────────────────────────────────────────────────
   var AM_DATA = {
@@ -658,7 +658,7 @@
   function handleSubmit(e) {
     e.preventDefault();
     if (APPS_SCRIPT_URL === 'COLLE_ICI_TON_URL_APPS_SCRIPT') {
-      showToast('⚠️ Configure l'URL Apps Script dans le HTML', 'error', 5000);
+      showToast('⚠️ Configure l\'URL Apps Script dans le HTML', 'error', 5000);
       return;
     }
     var fd = new FormData($('scoreForm'));
@@ -677,15 +677,13 @@
       setLoading(false);
       showToast('✅ Données enregistrées dans Google Sheets !');
       setTimeout(function(){
-        if(confirm('Soumission réussie !
-
-Réinitialiser pour une nouvelle saisie ?')){
+        if(confirm('Soumission réussie !\n\nRéinitialiser pour une nouvelle saisie ?')){
           $('scoreForm').reset(); updateScore(0); initDate(); onAmChange();
         }
       }, 700);
     }).catch(function(){
       setLoading(false);
-      showToast('❌ Erreur d'envoi. Vérifiez votre connexion.','error',6000);
+      showToast('❌ Erreur d\'envoi. Vérifiez votre connexion.','error',6000);
     });
   }
 
