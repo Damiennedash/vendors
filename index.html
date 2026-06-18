@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tableau de Score – Fan Milk</title>
+  <style>
+    :root {
+      --navy: #0A1E5E;
+      --blue: #1A3A8F;
+      --mid-blue: #2455B7;
+      --light-blue: #3B7DD8;
+      --accent: #00AEEF;
+      --white: #FFFFFF;
+      --off-white: #F4F7FC;
+      --gray: #D0D8E8;
+      --dark-gray: #5A6A88;
+      --text: #0D1B3E;
+      --red: #D93025;
+      --green: #1B8A4B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--off-white);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; color: var(--navy); font-size: 13px; letter-spacing: -0.5px;
+    }
+    .header-title {
+      font-size: 22px; font-weight: 800; color: var(--white); letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header-sub {
+      font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* ── FORM WRAPPER ── */
+    .form-wrap {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 16px 60px;
+    }
+
+    /* ── PERIOD CARD ── */
+    .period-card {
+      background: var(--white);
+      border: 1px solid var(--gray);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) repeat(2, 1.3fr);
+      gap: 16px;
+      align-items: end;
+    }
+
+    /* ── KPI ROW ── */
+    .kpi-row {
+      background: var(--white);
+      border: 1px solid var(--gray);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) 1.4fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .kpi-group { display: flex; flex-direction: column; gap: 10px; }
+    .kpi-group-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--mid-blue);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 4px; margin-bottom: 4px;
+    }
+    .kpi-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .kpi-triple { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+    /* ── HOTSPOT CARD ── */
+    .hotspot-card {
+      background: var(--white);
+      border: 1px solid var(--gray);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    .hotspot-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--mid-blue);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 6px; margin-bottom: 16px;
+    }
+    .hotspot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .hotspot-zone {
+      background: var(--off-white);
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .hotspot-zone-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      color: var(--navy); margin-bottom: 8px;
+    }
+    .hotspot-row4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+    /* ── SECTION CARD ── */
+    .section-card {
+      background: var(--white);
+      border: 1px solid var(--gray);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .section-header {
+      background: var(--blue);
+      color: var(--white);
+      padding: 14px 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .section-header-text { flex: 1; }
+    .section-name {
+      font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .section-sub { font-size: 10px; color: var(--gray); letter-spacing: 0.5px; }
+    .section-body { padding: 20px 24px; }
+
+    /* ── CRITERIA TABLE ── */
+    .criteria-table { width: 100%; border-collapse: collapse; }
+    .criteria-table th {
+      background: var(--navy); color: var(--white);
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 8px 10px; text-align: left;
+    }
+    .criteria-table td {
+      padding: 10px; border-bottom: 1px solid var(--gray);
+      vertical-align: middle; font-size: 12px;
+    }
+    .criteria-table tr:last-child td { border-bottom: none; }
+    .criteria-table tr:nth-child(even) td { background: var(--off-white); }
+    .criteria-text { color: var(--dark-gray); font-size: 11.5px; line-height: 1.5; }
+    .score-cell { text-align: center; }
+    .score-badge {
+      display: inline-block;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--navy); color: var(--white);
+      font-weight: 700; font-size: 12px;
+      line-height: 32px; text-align: center;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .score-badge:hover { background: var(--accent); }
+    .score-badge.active-1 { background: var(--red); }
+    .score-badge.active-3 { background: #E8A000; }
+    .score-badge.active-5 { background: var(--green); }
+
+    /* ── KPI SUB-TABLE ── */
+    .sub-kpi {
+      background: var(--off-white);
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    .sub-kpi-title {
+      font-size: 10px; font-weight: 700; color: var(--navy);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+    }
+    .sub-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .sub-kpi-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+    /* ── FORM ELEMENTS ── */
+    label {
+      display: block; font-size: 10px; font-weight: 600;
+      color: var(--dark-gray); text-transform: uppercase;
+      letter-spacing: 0.8px; margin-bottom: 4px;
+    }
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      width: 100%; padding: 8px 10px;
+      border: 1.5px solid var(--gray); border-radius: 6px;
+      font-size: 13px; color: var(--text);
+      background: var(--white);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 72px; }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A6A88' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+    }
+
+    .oui-non {
+      display: flex; gap: 8px;
+    }
+    .oui-non label {
+      display: flex; align-items: center; gap: 5px;
+      cursor: pointer; font-size: 12px; font-weight: 600;
+      text-transform: none; letter-spacing: 0; color: var(--text);
+    }
+    .oui-non input[type="radio"] { width: auto; }
+
+    /* ── SCORE BOX ── */
+    .score-summary {
+      background: var(--navy);
+      border-radius: 10px;
+      padding: 24px 32px;
+      margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .score-total-label { color: var(--gray); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .score-total-value { color: var(--white); font-size: 52px; font-weight: 900; line-height: 1; }
+    .score-max { color: var(--accent); font-size: 18px; font-weight: 700; }
+    .score-mention { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .score-mention.faible { color: #FF6B6B; }
+    .score-mention.moyen { color: #FFD166; }
+    .score-mention.bon { color: #06D6A0; }
+    .weeks-badge {
+      background: var(--mid-blue);
+      color: var(--white); border-radius: 8px;
+      padding: 10px 18px; text-align: center;
+    }
+    .weeks-badge label { color: var(--gray); font-size: 10px; margin-bottom: 4px; }
+    .weeks-badge input {
+      background: transparent; border: none; border-bottom: 2px solid var(--accent);
+      color: var(--white); font-size: 22px; font-weight: 800;
+      text-align: center; width: 60px; border-radius: 0; padding: 2px 4px;
+    }
+
+    /* ── ACTION PLAN ── */
+    .action-plan-card {
+      background: var(--white);
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+    .action-plan-title {
+      font-size: 12px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--mid-blue); margin-bottom: 14px;
+    }
+
+    /* ── SUBMIT ── */
+    .submit-row { text-align: center; }
+    .btn-submit {
+      background: var(--accent);
+      color: var(--white);
+      border: none; border-radius: 8px;
+      padding: 14px 48px;
+      font-size: 14px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover { background: var(--mid-blue); transform: translateY(-1px); }
+    .btn-reset {
+      background: transparent;
+      color: var(--dark-gray);
+      border: 1.5px solid var(--gray);
+      border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; margin-right: 12px;
+      transition: border-color 0.2s;
+    }
+    .btn-reset:hover { border-color: var(--navy); color: var(--navy); }
+
+    .legend {
+      font-size: 10px; color: var(--dark-gray); text-align: center;
+      margin-top: 8px; letter-spacing: 0.5px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--gray); margin: 16px 0; }
+
+    /* ── SCALE LEGEND ── */
+    .scale-legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      background: var(--off-white); border-radius: 8px;
+      padding: 10px 16px; margin-bottom: 16px; align-items: center;
+    }
+    .scale-legend span { font-size: 11px; color: var(--dark-gray); }
+    .scale-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; color: var(--white);
+    }
+    .sp-red { background: var(--red); }
+    .sp-yellow { background: #E8A000; }
+    .sp-green { background: var(--green); }
+
+    /* ── REPO BADGE ── */
+    .header-repo {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(0,174,239,0.35);
+      border-radius: 20px;
+      padding: 6px 14px;
+    }
+    .repo-icon { color: var(--accent); font-size: 14px; }
+    .repo-name {
+      font-size: 11px; font-weight: 700; color: var(--white);
+      letter-spacing: 1px; font-family: 'Courier New', monospace;
+    }
+    @media (max-width: 700px) {
+      .repo-name { font-size: 10px; letter-spacing: 0.5px; }
+      .header-repo { padding: 5px 10px; }
+    }
+
+    /* ── RESPONSIVE MOBILE ── */
+    @media (max-width: 700px) {
+      .header { padding: 14px 16px; }
+      .header-title { font-size: 16px; }
+      .form-wrap { margin: 12px auto; padding: 0 10px 48px; }
+
+      .period-card { grid-template-columns: 1fr 1fr; padding: 14px 12px; gap: 10px; }
+      .period-card > div:last-child { grid-column: 1 / -1; }
+
+      .kpi-row { grid-template-columns: 1fr 1fr; padding: 14px 12px; gap: 14px; }
+      .kpi-row > div:nth-child(3),
+      .kpi-row > div:nth-child(4) { grid-column: 1 / -1; }
+      .kpi-triple { grid-template-columns: 1fr 1fr 1fr; }
+
+      .hotspot-grid { grid-template-columns: 1fr; }
+      .hotspot-row4 { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+      .sub-kpi-grid { grid-template-columns: 1fr 1fr; }
+      .sub-kpi-grid-3 { grid-template-columns: 1fr 1fr; }
+      .sub-kpi { padding: 10px; }
+
+      .section-body { padding: 14px 12px; }
+
+      .score-summary { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 16px; }
+      .score-total-value { font-size: 40px; }
+      .weeks-badge { width: 100%; text-align: center; }
+
+      .scale-legend { gap: 8px; padding: 8px 10px; }
+
+      .criteria-table th:last-child,
+      .criteria-table td:last-child { width: 90px; }
+      .criteria-table td { padding: 8px 6px; }
+      .criteria-text { font-size: 11px; }
+
+      .submit-row { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+      .btn-reset { margin-right: 0; width: 100%; max-width: 340px; }
+      .btn-submit { width: 100%; max-width: 340px; }
+
+      input[type="text"], input[type="number"], input[type="date"], select {
+        padding: 10px; font-size: 15px;
+      }
+      select { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">FM</div>
+    <div>
+      <div class="header-title">Tableau de Score</div>
+      <div class="header-sub">Fan Milk · Suivi terrain quotidien</div>
+    </div>
+  </div>
+  <div class="header-repo">
+    <span class="repo-icon">⬡</span>
+    <span class="repo-name">fanmilk-scoreboard</span>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <form id="scoreForm">
+
+    <!-- ── PÉRIODE ── -->
+    <div class="period-card">
+      <div>
+        <label>Année (AA)</label>
+        <input type="number" name="annee" min="2020" max="2099" placeholder="2026" />
+      </div>
+      <div>
+        <label>Mois</label>
+        <select name="mois">
+          <option value="">— Mois —</option>
+          <option>Janvier</option><option>Février</option><option>Mars</option>
+          <option>Avril</option><option>Mai</option><option>Juin</option>
+          <option>Juillet</option><option>Août</option><option>Septembre</option>
+          <option>Octobre</option><option>Novembre</option><option>Décembre</option>
+        </select>
+      </div>
+      <div>
+        <label>Semaine (SS)</label>
+        <input type="number" name="semaine" min="1" max="53" placeholder="25" />
+      </div>
+      <div>
+        <label>Jour (JJ)</label>
+        <input type="number" name="jour" min="1" max="31" placeholder="18" />
+      </div>
+      <div>
+        <label>Zone *</label>
+        <select name="territoire" required>
+          <option value="">— Sélectionner —</option>
+          <option>BAGUIDA</option>
+          <option>AGOE</option>
+          <option>LOME CENTRE</option>
+          <option>ANEHO-KPALIME</option>
+          <option>GRAND NORD</option>
+        </select>
+      </div>
+      <div>
+        <label>AM (Area Manager) *</label>
+        <select name="am" required>
+          <option value="">— Sélectionner —</option>
+          <option>GANDE LOME</option>
+          <option>SYLVAIN</option>
+          <option>CLAUDE</option>
+          <option>ALI</option>
+          <option>GANDE INT</option>
+        </select>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <label>Nom du dépôt *</label>
+        <input type="text" name="nom_depot" placeholder="Ex : Dépôt Bè Kpota, Dépôt Adidogomé..." required />
+      </div>
+    </div>
+
+    <!-- ── VENTES ── -->
+    <div class="kpi-row">
+      <!-- Sell-In -->
+      <div class="kpi-group">
+        <div class="kpi-group-title">Sell-In (Fcfa)</div>
+        <div class="kpi-pair">
+          <div><label>Plan</label><input type="number" name="sellin_plan" placeholder="0" /></div>
+          <div><label>MTD</label><input type="number" name="sellin_mtd" placeholder="0" /></div>
+        </div>
+        <div><label>% Réalisation</label><input type="number" name="sellin_pct" placeholder="0" step="0.1" /></div>
+      </div>
+
+      <!-- Revendeurs -->
+      <div class="kpi-group">
+        <div class="kpi-group-title">Revendeurs</div>
+        <div class="kpi-triple">
+          <div><label>Total</label><input type="number" name="rv_total" placeholder="0" /></div>
+          <div><label>Actifs</label><input type="number" name="rv_actifs" placeholder="0" /></div>
+          <div><label>Actifs/Jour</label><input type="number" name="rv_actifs_jour" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <!-- Recrutement -->
+      <div class="kpi-group">
+        <div class="kpi-group-title">Recrutement Revendeurs</div>
+        <div class="kpi-triple">
+          <div><label>Objectif FY</label><input type="number" name="recr_fy" placeholder="0" /></div>
+          <div><label>Recrutés YTD</label><input type="number" name="recr_ytd" placeholder="0" /></div>
+          <div><label>À recruter</label><input type="number" name="recr_reste" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <!-- Semaines consécutives -->
+      <div class="kpi-group">
+        <div class="kpi-group-title">Semaines consécutives avec score</div>
+        <input type="number" name="semaines_consecutives" min="0" placeholder="0" style="font-size:28px;font-weight:800;color:var(--navy);text-align:center;padding:12px;" />
+      </div>
+    </div>
+
+    <!-- ── SUIVI HOTSPOT ── -->
+    <div class="hotspot-card">
+      <div class="hotspot-title">📍 Suivi actif des points de vente stratégiques</div>
+      <div class="hotspot-grid">
+        <div class="hotspot-zone">
+          <div class="hotspot-zone-label">🏫 Écoles</div>
+          <div class="hotspot-row4">
+            <div><label>Dispo.</label><input type="number" name="hs_ecole_dispo" placeholder="0" /></div>
+            <div><label>Actif</label><input type="number" name="hs_ecole_actif" placeholder="0" /></div>
+            <div><label>Assignés</label><input type="number" name="hs_ecole_assign" placeholder="0" /></div>
+            <div><label>Inactif</label><input type="number" name="hs_ecole_inactif" placeholder="0" /></div>
+          </div>
+        </div>
+        <div class="hotspot-zone">
+          <div class="hotspot-zone-label">🛒 Marchés</div>
+          <div class="hotspot-row4">
+            <div><label>Dispo.</label><input type="number" name="hs_marche_dispo" placeholder="0" /></div>
+            <div><label>Actif</label><input type="number" name="hs_marche_actif" placeholder="0" /></div>
+            <div><label>Assignés</label><input type="number" name="hs_marche_assign" placeholder="0" /></div>
+            <div><label>Inactif</label><input type="number" name="hs_marche_inactif" placeholder="0" /></div>
+          </div>
+        </div>
+        <div class="hotspot-zone">
+          <div class="hotspot-zone-label">🔀 Carrefours</div>
+          <div class="hotspot-row4">
+            <div><label>Dispo.</label><input type="number" name="hs_carrefour_dispo" placeholder="0" /></div>
+            <div><label>Actif</label><input type="number" name="hs_carrefour_actif" placeholder="0" /></div>
+            <div><label>Assignés</label><input type="number" name="hs_carrefour_assign" placeholder="0" /></div>
+            <div><label>Inactif</label><input type="number" name="hs_carrefour_inactif" placeholder="0" /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SCORE SUMMARY ── -->
+    <div class="score-summary">
+      <div>
+        <div class="score-total-label">Évaluation globale</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <div class="score-total-value" id="liveScore">—</div>
+          <div class="score-max">/ 60</div>
+        </div>
+        <div class="score-mention" id="scoreMention">Saisir les scores</div>
+      </div>
+      <div class="weeks-badge">
+        <label>Score saisi</label>
+        <input type="number" name="score_global" id="scoreInput" min="0" max="60" placeholder="0" oninput="updateScore(this.value)" />
+      </div>
+    </div>
+
+    <!-- LÉGENDE ÉCHELLE -->
+    <div class="scale-legend">
+      <span>Échelle :</span>
+      <span class="scale-pill sp-red">1–2 = En dessous</span>
+      <span class="scale-pill sp-yellow">3 = Conforme</span>
+      <span class="scale-pill sp-green">4–5 = Dépasse</span>
+      <span style="margin-left:auto;">Mention : </span>
+      <span class="scale-pill sp-red">&lt; 30 = Faible</span>
+      <span class="scale-pill sp-yellow">30–45 = Moyen</span>
+      <span class="scale-pill sp-green">≥ 45 = Bon</span>
+    </div>
+
+    <!-- ══ SECTION 1 : GESTION DES REVENDEURS ══ -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">👥</div>
+        <div class="section-header-text">
+          <div class="section-name">Gestion des Revendeurs</div>
+          <div class="section-sub">Indicateurs de performance · Équipements de vente</div>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <!-- Indicateurs de performance des revendeurs -->
+        <div class="sub-kpi">
+          <div class="sub-kpi-title">Indicateurs de performance des revendeurs</div>
+          <div class="sub-kpi-grid">
+            <div><label>Ventes – Target</label><input type="number" name="ventes_target" placeholder="0" /></div>
+            <div><label>Ventes – Actuel</label><input type="number" name="ventes_actuel" placeholder="0" /></div>
+            <div><label>VMPS – Plan</label><input type="number" name="vmps_plan" placeholder="0" /></div>
+            <div><label>VMPS – Actuel</label><input type="number" name="vmps_actuel" placeholder="0" /></div>
+          </div>
+        </div>
+
+        <table class="criteria-table">
+          <thead>
+            <tr>
+              <th style="width:50%">Critère</th>
+              <th style="width:16%;text-align:center">Score (1/3/5)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="criteria-text">Taux de réalisation des vendeurs actifs journaliers (Évaluation basée sur la réalisation MTD)</td>
+              <td class="score-cell">
+                <select name="score_rv_actifs_jour">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Vente Moyenne Par Sortie – VMPS (Évaluation basée sur la réalisation MTD)</td>
+              <td class="score-cell">
+                <select name="score_vmps">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Objectifs de recrutement des fournisseurs atteints (Évaluation basée sur la réalisation MTD)</td>
+              <td class="score-cell">
+                <select name="score_recrutement">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <!-- Équipements de vente -->
+        <div class="sub-kpi">
+          <div class="sub-kpi-title">Équipements de vente (Vélo, Pousses-Pousses, Congélateur) – Nouveaux déploiements</div>
+          <div class="sub-kpi-grid">
+            <div><label>Total</label><input type="number" name="equip_total" placeholder="0" /></div>
+            <div><label>Actif</label><input type="number" name="equip_actif" placeholder="0" /></div>
+            <div><label>Plan</label><input type="number" name="equip_plan" placeholder="0" /></div>
+            <div><label>Actuel</label><input type="number" name="equip_actuel" placeholder="0" /></div>
+          </div>
+        </div>
+
+        <table class="criteria-table">
+          <thead><tr><th>Critère</th><th style="text-align:center">Score</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="criteria-text">Tous les équipements de vente sont bien nettoyés et correctement entretenus</td>
+              <td class="score-cell">
+                <select name="score_equip_propre">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Respect de l'utilisation des actifs. Zéro (0) actif inactif</td>
+              <td class="score-cell">
+                <select name="score_actif_zero">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les équipements sont conservés dans un environnement sécurisé et bien protégés</td>
+              <td class="score-cell">
+                <select name="score_equip_securise">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ SECTION 2 : REVENDEUR MANAGEMENT (Chaîne du froid) ══ -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">🏪</div>
+        <div class="section-header-text">
+          <div class="section-name">Revendeur Management</div>
+          <div class="section-sub">Gestion de la chaîne du froid (Fanmilk + agents propriétaires)</div>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="sub-kpi">
+          <div class="sub-kpi-title">Congélateurs</div>
+          <div class="sub-kpi-grid-3">
+            <div><label>Total</label><input type="number" name="conge_total" placeholder="0" /></div>
+            <div><label>Actif</label><input type="number" name="conge_actif" placeholder="0" /></div>
+            <div><label>Inactif / Défectueux</label><input type="number" name="conge_defect" placeholder="0" /></div>
+          </div>
+        </div>
+
+        <table class="criteria-table">
+          <thead><tr><th>Critère</th><th style="text-align:center">Score</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="criteria-text">Tous les congélateurs sont bien nettoyés et dégivres</td>
+              <td class="score-cell">
+                <select name="score_conge_propre">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les congélateurs ont été disposés de manière à permettre un accès facile en magasin</td>
+              <td class="score-cell">
+                <select name="score_conge_acces">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les retours de marchandises sont séparés dans un congélateur dédié et correctement étiquetés</td>
+              <td class="score-cell">
+                <select name="score_retours">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <!-- Hygiène -->
+        <div class="sub-kpi" style="margin-top:14px;">
+          <div class="sub-kpi-title">Hygiène du point de vente</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
+            <div>
+              <label>Lavage des mains disponible (O/N)</label>
+              <div class="oui-non">
+                <label><input type="radio" name="hygiene_lavage" value="O" /> Oui</label>
+                <label><input type="radio" name="hygiene_lavage" value="N" /> Non</label>
+              </div>
+            </div>
+            <div>
+              <label>Trousse de premiers secours (O/N)</label>
+              <div class="oui-non">
+                <label><input type="radio" name="hygiene_trousse" value="O" /> Oui</label>
+                <label><input type="radio" name="hygiene_trousse" value="N" /> Non</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table class="criteria-table">
+          <thead><tr><th>Critère</th><th style="text-align:center">Score</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="criteria-text">Le point de vente de l'agent est propre, ordonné et exempt de toiles d'araignée. Les murs sont exempts de moisissures, d'humidité ou de prolifération d'algues.</td>
+              <td class="score-cell">
+                <select name="score_hygiene_proprete">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les drains ouverts sont correctement couverts et non exposés</td>
+              <td class="score-cell">
+                <select name="score_drains">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Poubelle(s) disponible(s), correctement positionnée(s) et propre(s)</td>
+              <td class="score-cell">
+                <select name="score_poubelle">
+                  <option value="">–</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- ══ MUST DO'S ══ -->
+    <div class="section-card">
+      <div class="section-header" style="background:var(--mid-blue);">
+        <div class="section-icon" style="background:var(--navy);">✅</div>
+        <div class="section-header-text">
+          <div class="section-name">Must Do's / Have's</div>
+          <div class="section-sub">Obligations non négociables</div>
+        </div>
+      </div>
+      <div class="section-body">
+        <table class="criteria-table">
+          <thead><tr><th>Obligation</th><th style="text-align:center;width:100px">Conforme</th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="criteria-text">Tous les actifs FML sont taguetés et assignés sur Fieldpro</td>
+              <td class="score-cell">
+                <div class="oui-non" style="justify-content:center">
+                  <label><input type="radio" name="mustdo_fieldpro" value="O" /> O</label>
+                  <label><input type="radio" name="mustdo_fieldpro" value="N" /> N</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Respect de la maintenance de routine (une fois tous les 8 semaines / 2 mois)</td>
+              <td class="score-cell">
+                <div class="oui-non" style="justify-content:center">
+                  <label><input type="radio" name="mustdo_maintenance" value="O" /> O</label>
+                  <label><input type="radio" name="mustdo_maintenance" value="N" /> N</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les congélateurs sont disposés pour permettre une navigation facile en magasin</td>
+              <td class="score-cell">
+                <div class="oui-non" style="justify-content:center">
+                  <label><input type="radio" name="mustdo_navigation" value="O" /> O</label>
+                  <label><input type="radio" name="mustdo_navigation" value="N" /> N</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="criteria-text">Tous les drains ouverts sont couverts et non exposés</td>
+              <td class="score-cell">
+                <div class="oui-non" style="justify-content:center">
+                  <label><input type="radio" name="mustdo_drains" value="O" /> O</label>
+                  <label><input type="radio" name="mustdo_drains" value="N" /> N</label>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PLAN D'ACTION ══ -->
+    <div class="action-plan-card">
+      <div class="action-plan-title">📋 Plan d'Action</div>
+
+      <div>
+        <label>Actions correctives à mener</label>
+        <textarea name="plan_action" placeholder="Décrivez les actions à mettre en place cette semaine pour améliorer le score..."></textarea>
+      </div>
+    </div>
+
+    <!-- ══ OBSERVATIONS ══ -->
+    <div class="section-card" style="margin-bottom:24px;">
+      <div class="section-body">
+        <label style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block;">Observations générales</label>
+        <textarea name="observations" placeholder="Observations terrain, contexte particulier, points d'attention..." style="min-height:90px;"></textarea>
+
+      </div>
+    </div>
+
+    <!-- ══ SUBMIT ══ -->
+    <div class="submit-row">
+      <button type="button" class="btn-reset" onclick="document.getElementById('scoreForm').reset();updateScore(0)">Réinitialiser</button>
+      <button type="submit" class="btn-submit">Soumettre le tableau de score</button>
+    </div>
+    <div class="legend" style="margin-top:12px;">
+      Ce formulaire reproduit le Tableau de Score Fan Milk · Danone · Usage terrain uniquement
+    </div>
+
+  </form>
+</div>
+
+<style>
+  /* ── TOAST NOTIFICATION ── */
+  #toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: #0A1E5E; color: #fff; padding: 14px 28px;
+    border-radius: 10px; font-size: 14px; font-weight: 600;
+    box-shadow: 0 8px 32px rgba(10,30,94,0.25);
+    transition: transform 0.4s cubic-bezier(.17,.67,.35,1.2), opacity 0.3s;
+    opacity: 0; z-index: 9999; text-align: center; max-width: 90vw;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast.success { border-left: 5px solid #06D6A0; }
+  #toast.error   { border-left: 5px solid #FF6B6B; }
+
+  /* ── OVERLAY LOADING ── */
+  #loadingOverlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(10,30,94,0.55); z-index: 9998;
+    align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+  }
+  #loadingOverlay.show { display: flex; }
+  .spinner {
+    width: 48px; height: 48px; border: 5px solid rgba(255,255,255,0.2);
+    border-top-color: #00AEEF; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+</style>
+
+<!-- Toast & Overlay -->
+<div id="toast"></div>
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Envoi en cours…</div>
+</div>
+
+<script>
+  // ─── REMPLACE PAR TON URL APPS SCRIPT APRÈS DÉPLOIEMENT ───────────────────
+  const APPS_SCRIPT_URL = 'COLLE_ICI_TON_URL_APPS_SCRIPT';
+  // ──────────────────────────────────────────────────────────────────────────
+
+  function showToast(msg, type = 'success', duration = 4000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show ' + type;
+    setTimeout(() => { t.className = ''; }, duration);
+  }
+
+  function setLoading(on) {
+    document.getElementById('loadingOverlay').classList.toggle('show', on);
+    document.querySelector('.btn-submit').disabled = on;
+  }
+
+  function updateScore(val) {
+    const n = parseInt(val) || 0;
+    document.getElementById('liveScore').textContent = n || '—';
+    const el = document.getElementById('scoreMention');
+    if (!val || n === 0) { el.textContent = 'Saisir les scores'; el.className = 'score-mention'; return; }
+    if (n < 30)      { el.textContent = 'Faible'; el.className = 'score-mention faible'; }
+    else if (n < 45) { el.textContent = 'Moyen';  el.className = 'score-mention moyen'; }
+    else             { el.textContent = 'Bon';    el.className = 'score-mention bon'; }
+  }
+
+  // Calcul automatique du score depuis les selects
+  document.getElementById('scoreForm').addEventListener('change', function() {
+    const selects = this.querySelectorAll('select[name^="score_"]');
+    let total = 0;
+    selects.forEach(s => { total += parseInt(s.value) || 0; });
+    if (total > 0) {
+      document.getElementById('scoreInput').value = total;
+      updateScore(total);
+      // Mention automatique
+      const mention = total < 30 ? 'Faible' : total < 45 ? 'Moyen' : 'Bon';
+      const mentionField = document.querySelector('[name="mention"]');
+      if (mentionField) mentionField.value = mention;
+    }
+  });
+
+  // Soumission → envoi vers Google Sheets via Apps Script
+  document.getElementById('scoreForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    if (APPS_SCRIPT_URL === 'COLLE_ICI_TON_URL_APPS_SCRIPT') {
+      showToast('⚠️ Configure d\'abord l\'URL Apps Script dans le fichier HTML', 'error', 5000);
+      return;
+    }
+
+    const formData = new FormData(this);
+    const payload = {};
+    formData.forEach((v, k) => { payload[k] = v; });
+
+    // Ajouter la mention calculée
+    const score = parseInt(payload.score_global) || 0;
+    payload.mention = score < 30 ? 'Faible' : score < 45 ? 'Moyen' : 'Bon';
+
+    setLoading(true);
+
+    try {
+      // Apps Script ne supporte pas CORS en POST direct → on utilise fetch avec no-cors
+      // Les données arrivent quand même côté Apps Script
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      setLoading(false);
+      showToast('✅ Données enregistrées dans Google Sheets !', 'success');
+      setTimeout(() => {
+        if (confirm('Formulaire soumis avec succès !\n\nVoulez-vous réinitialiser pour une nouvelle saisie ?')) {
+          document.getElementById('scoreForm').reset();
+          updateScore(0);
+        }
+      }, 600);
+
+    } catch (err) {
+      setLoading(false);
+      showToast('❌ Erreur d\'envoi. Vérifiez votre connexion.', 'error', 6000);
+      console.error(err);
+    }
+  });
+</script>
+</body>
+</html>
