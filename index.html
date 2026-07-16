@@ -40,7 +40,10 @@
     .form-wrap{max-width:960px;margin:24px auto;padding:0 14px 60px;}
 
     /* CARDS */
-    .period-card{background:var(--white);border:1px solid var(--gray);border-radius:10px;padding:18px 20px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:end;}
+    .period-card{background:var(--white);border:1px solid var(--gray);border-radius:10px;padding:18px 20px;margin-bottom:18px;display:flex;flex-direction:column;gap:14px;}
+    .period-row{display:grid;gap:14px;align-items:end;}
+    .period-row.row-3{grid-template-columns:1fr 1fr 1fr;}
+    .period-row.row-2{grid-template-columns:1fr 1fr;}
     .full-col{grid-column:1/-1;}
 
     .kpi-row{background:var(--white);border:1px solid var(--gray);border-radius:10px;padding:18px 20px;margin-bottom:18px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px;align-items:start;}
@@ -120,7 +123,7 @@
 
     /* FORMS */
     label{display:block;font-size:10px;font-weight:600;color:#000000;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
-    input[type="text"],input[type="number"],input[type="date"],select,textarea{width:100%;padding:9px 10px;border:1.5px solid var(--gray);border-radius:6px;font-size:13px;color:var(--text);background:var(--white);transition:border-color 0.2s;outline:none;}
+    input[type="text"],input[type="number"],input[type="date"],input[type="password"],select,textarea{width:100%;padding:9px 10px;border:1.5px solid var(--gray);border-radius:6px;font-size:13px;color:var(--text);background:var(--white);transition:border-color 0.2s;outline:none;}
     input:focus,select:focus,textarea:focus{border-color:var(--accent);}
     input[readonly]{background:#f0f4f8;color:var(--dark-gray);cursor:not-allowed;}
     textarea{resize:vertical;min-height:70px;}
@@ -150,7 +153,10 @@
       .header{padding:12px 14px;}
       .header-title{font-size:15px;}
       .form-wrap{margin:10px auto;padding:0 8px 48px;}
-      .period-card{grid-template-columns:1fr 1fr;padding:13px 12px;gap:10px;}
+      .period-card{padding:13px 12px;gap:10px;}
+      .period-row{gap:10px;}
+      .period-row.row-3{grid-template-columns:1fr 1fr;}
+      .period-row.row-3>div:nth-child(3){grid-column:1/-1;}
       .kpi-row{grid-template-columns:1fr 1fr;padding:13px 12px;gap:12px;}
       .kpi-row>.kpi-group:nth-child(3),.kpi-row>.kpi-group:nth-child(4){grid-column:1/-1;}
       .hotspot-grid{grid-template-columns:1fr 1fr;}
@@ -164,7 +170,7 @@
       .submit-row{display:flex;flex-direction:column;gap:10px;align-items:center;}
       .btn-reset{margin-right:0;width:100%;max-width:340px;}
       .btn-submit{width:100%;max-width:340px;}
-      input[type="text"],input[type="number"],input[type="date"],select{padding:10px;font-size:15px;}
+      input[type="text"],input[type="number"],input[type="date"],input[type="password"],select{padding:10px;font-size:15px;}
       .header-repo{padding:5px 10px;}
       .repo-name{font-size:9px;}
     }
@@ -221,46 +227,52 @@
   <!-- ── IDENTIFICATION ── -->
   <div class="period-card">
     <!-- Ligne 1 : Année auto | Mois auto | Semaine auto -->
-    <div>
-      <label>Année</label>
-      <input type="text" name="annee" id="f_annee" readonly />
-    </div>
-    <div>
-      <label>Mois</label>
-      <input type="text" name="mois" id="f_mois" readonly />
-    </div>
-    <div>
-      <label>Semaine</label>
-      <input type="text" name="semaine" id="f_semaine" readonly />
+    <div class="period-row row-3">
+      <div>
+        <label>Année</label>
+        <input type="text" name="annee" id="f_annee" readonly />
+      </div>
+      <div>
+        <label>Mois</label>
+        <input type="text" name="mois" id="f_mois" readonly />
+      </div>
+      <div>
+        <label>Semaine</label>
+        <input type="text" name="semaine" id="f_semaine" readonly />
+      </div>
     </div>
     <!-- Ligne 2 : Jour auto | Date complète -->
-    <div>
-      <label>Jour</label>
-      <input type="text" name="jour" id="f_jour" readonly />
-    </div>
-    <div style="grid-column:2/4;">
-      <label>Date</label>
-      <input type="text" name="date_saisie" id="f_date" readonly />
+    <div class="period-row row-2">
+      <div>
+        <label>Jour</label>
+        <input type="text" name="jour" id="f_jour" readonly />
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="text" name="date_saisie" id="f_date" readonly />
+      </div>
     </div>
     <!-- Ligne 3 : AM → Zone -->
-    <div>
-      <label>AM (Area Manager) *</label>
-      <select name="am" id="f_am" required >
-        <option value="">— Sélectionner —</option>
-        <option value="SYLVAIN">SYLVAIN</option>
-        <option value="GANDE">GANDE</option>
-        <option value="ALI">ALI</option>
-      </select>
-    </div>
-    <div>
-      <label>Zone</label>
-      <input type="text" name="territoire" id="f_zone" readonly placeholder="Auto selon AM / dépôt" style="background:#f0f4f8;color:var(--dark-gray);" />
-    </div>
-    <div>
-      <label>Nom du dépôt *</label>
-      <select name="nom_depot" id="f_depot" required>
-        <option value="">— Choisir l'AM d'abord —</option>
-      </select>
+    <div class="period-row row-3">
+      <div>
+        <label>AM *</label>
+        <select name="am" id="f_am" required >
+          <option value="">— Sélectionner —</option>
+          <option value="SYLVAIN">SYLVAIN</option>
+          <option value="GANDE">GANDE</option>
+          <option value="ALI">ALI</option>
+        </select>
+      </div>
+      <div>
+        <label>Zone</label>
+        <input type="text" name="territoire" id="f_zone" readonly placeholder="Auto selon AM / dépôt" style="background:#f0f4f8;color:var(--dark-gray);" />
+      </div>
+      <div>
+        <label>Nom du dépôt *</label>
+        <select name="nom_depot" id="f_depot" required>
+          <option value="">— Choisir l'AM d'abord —</option>
+        </select>
+      </div>
     </div>
   </div>
 
@@ -702,11 +714,9 @@
       setLoading(false);
       showToast('✅ Données enregistrées dans Google Sheets !');
       setTimeout(function(){
-        if(confirm('Soumission réussie !\n\nRéinitialiser pour une nouvelle saisie ?')){
-          $('scoreForm').reset(); updateScore(0); initDate();
-          applyRoleLock(localStorage.getItem('fm_auth_role'));
-        }
-      }, 700);
+        localStorage.removeItem('fm_auth_role');
+        location.reload();
+      }, 1200);
     }).catch(function(){
       setLoading(false);
       showToast('❌ Erreur d\'envoi. Vérifiez votre connexion.','error',6000);
