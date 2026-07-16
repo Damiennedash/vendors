@@ -35,7 +35,7 @@ var COLONNES = [
   'Total Revendeurs', 'Revendeurs Actifs', 'Actifs/Jour',
   // Recrutement
   'Recrutement FY', 'Recrutement YTD', 'Recrutement Reste',
-  'Semaines Consécutives',
+  'Score Semaine Antérieure',
   // Hotspot Écoles
   'Écoles Dispo', 'Écoles Actif', 'Écoles Assignés', 'Écoles Inactif',
   // Hotspot Marchés
@@ -43,9 +43,9 @@ var COLONNES = [
   // Hotspot Carrefours
   'Carrefours Dispo', 'Carrefours Actif', 'Carrefours Assignés', 'Carrefours Inactif',
   // Gestion Revendeurs - Données
-  'Ventes Target', 'Ventes Actuel', 'VMPS Plan', 'VMPS Actuel',
+  'Ventes Target', 'Ventes Actuel', 'QMVP Plan', 'QMVP Actuel',
   // Scores Gestion Revendeurs
-  'Score Taux Actifs Jour', 'Score VMPS', 'Score Recrutement',
+  'Score Taux Actifs Jour', 'Score QMVP', 'Score Recrutement',
   // Équipements
   'Equip Total', 'Equip Actif', 'Equip Plan', 'Equip Actuel',
   'Score Equip Propre', 'Score Zéro Inactif', 'Score Equip Sécurisé',
@@ -54,7 +54,7 @@ var COLONNES = [
   'Score Congé Propre', 'Score Congé Accès', 'Score Retours',
   // Hygiène
   'Lavage Mains', 'Trousse Secours',
-  'Score Propreté PDV', 'Score Drains', 'Score Poubelle',
+  'Score Propreté PDV', 'Score Sol Propreté', 'Score Poubelle',
   // Must Do's
   "MustDo Fieldpro", 'MustDo Maintenance', 'MustDo Navigation', 'MustDo Drains',
   // Résultat
@@ -111,7 +111,7 @@ function _ecrireLigne(data) {
     data.rv_total || '', data.rv_actifs || '', data.rv_actifs_jour || '',
     // Recrutement
     data.recr_fy || '', data.recr_ytd || '', data.recr_reste || '',
-    data.semaines_consecutives || '',
+    data.score_semaine_precedente || '',
     // Hotspot Écoles
     data.hs_ecole_dispo || '', data.hs_ecole_actif || '',
     data.hs_ecole_assign || '', data.hs_ecole_inactif || '',
@@ -123,8 +123,8 @@ function _ecrireLigne(data) {
     data.hs_carrefour_assign || '', data.hs_carrefour_inactif || '',
     // Gestion Revendeurs
     data.ventes_target || '', data.ventes_actuel || '',
-    data.vmps_plan || '', data.vmps_actuel || '',
-    data.score_rv_actifs_jour || '', data.score_vmps || '',
+    data.qmvp_plan || '', data.qmvp_actuel || '',
+    data.score_rv_actifs_jour || '', data.score_qmvp || '',
     data.score_recrutement || '',
     // Équipements
     data.equip_total || '', data.equip_actif || '',
@@ -137,7 +137,7 @@ function _ecrireLigne(data) {
     data.score_retours || '',
     // Hygiène
     data.hygiene_lavage || '', data.hygiene_trousse || '',
-    data.score_hygiene_proprete || '', data.score_drains || '',
+    data.score_hygiene_proprete || '', data.score_sol_proprete || '',
     data.score_poubelle || '',
     // Must Do's
     data.mustdo_fieldpro || '', data.mustdo_maintenance || '',
