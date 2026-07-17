@@ -75,6 +75,14 @@
   .mention-bon{background:var(--green);}
   .mention-moyen{background:var(--yellow);}
   .mention-faible{background:var(--red);}
+  .class-badge{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:6px;font-weight:900;color:#FFFFFF;font-size:13px;}
+  .class-a{background:#1B8A4B;}
+  .class-b{background:#2455B7;}
+  .class-c{background:#E8A33D;}
+  .class-d{background:#D93025;}
+  .class-chip{border-radius:10px;padding:10px 18px;min-width:80px;text-align:center;color:#FFFFFF;}
+  .class-chip .n{font-size:22px;font-weight:900;display:block;}
+  .class-chip .lbl{font-size:11px;font-weight:700;text-transform:uppercase;}
   .score-cell-bon{background:#D9EAD3!important;font-weight:800;}
   .score-cell-moyen{background:#FFF2CC!important;font-weight:800;}
   .score-cell-faible{background:#F4CCCC!important;font-weight:800;}
@@ -141,10 +149,73 @@
       <label>Dépôt</label>
       <select id="filterDepot"><option value="">Tous les dépôts</option></select>
     </div>
+    <div class="filter-field">
+      <label>Date</label>
+      <select id="filterDate"><option value="">Toutes les dates</option></select>
+    </div>
     <button class="btn-reset-filters" id="btnResetFilters">Réinitialiser</button>
     <div class="filter-count" id="filterCount"></div>
   </div>
 
+  <div class="panel-title" style="margin:4px 0 10px 2px;">📊 Indicateurs globaux <span style="font-weight:600;text-transform:none;letter-spacing:0;color:var(--dark-gray);">(dernier relevé de chaque dépôt — se met à jour à chaque nouvelle saisie)</span></div>
+  <div class="kpi-grid" id="kpiGridGlobal"></div>
+
+  <!-- ══════════════ TOUT CE QUI EST CHIFFRE D'AFFAIRES (CA MTD) EN PREMIER ══════════════ -->
+
+  <div class="panel">
+    <div class="panel-title">📈 Évolution du CA MTD par dépôt</div>
+    <div class="chart-box" style="height:280px;"><canvas id="chartDepotEvolution"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🏷️ Répartition par classe (CA MTD)</div>
+    <div id="classSummary" style="display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;"></div>
+    <div style="font-size:11px;color:#000;margin-top:12px;">
+      Classe A : ≥ 5M Fcfa &nbsp;·&nbsp; Classe B : 2M – 5M &nbsp;·&nbsp; Classe C : 1M – 2M &nbsp;·&nbsp; Classe D : &lt; 1M
+      <br/>(basé sur le dernier CA MTD connu de chaque dépôt)
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🏆 Top 5 des meilleurs dépôts (CA MTD)</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableTop5CA">
+        <thead><tr><th>Classe</th><th>AM</th><th>Dépôt</th><th>CA MTD</th><th>Revendeurs actifs</th><th>Équip. opérationnels</th><th>Score</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">⚠️ Dépôts en Classe C &amp; D (CA MTD faible)</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableClassCD">
+        <thead><tr><th>Classe</th><th>AM</th><th>Dépôt</th><th>CA MTD</th><th>Revendeurs actifs</th><th>Équip. opérationnels</th><th>Score</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════ INDICATEURS NON LIÉS AU SCORE (VENTES/QMVP, VISITES) ══════════════ -->
+
+  <div class="panel">
+    <div class="panel-title">🛒 Réalisation Ventes & QMVP (% de l'objectif)</div>
+    <div class="chart-box" style="height:220px;"><canvas id="chartVentesQMVP"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🕐 Visites par AM</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableVisitesAM">
+        <thead><tr><th>AM</th><th>Nombre de visites</th><th>Heure moyenne de visite</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════ TOUT CE QUI CONCERNE LE SCORE, EN DERNIÈRE POSITION ══════════════ -->
+
+  <div class="panel-title" style="margin:20px 0 10px 2px;">📅 Indicateurs sur la période filtrée</div>
   <div class="kpi-grid" id="kpiGrid"></div>
 
   <div class="charts-row">
@@ -160,11 +231,6 @@
       <div class="panel-title">🎯 Répartition des mentions</div>
       <div class="chart-box"><canvas id="chartMention"></canvas></div>
     </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title">🛒 Réalisation Ventes & QMVP (% de l'objectif)</div>
-    <div class="chart-box" style="height:220px;"><canvas id="chartVentesQMVP"></canvas></div>
   </div>
 
   <div class="panel">
@@ -327,6 +393,9 @@ function buildRecords(header, rows) {
     qmvpActuel: findCol(header, ['qmvp', 'actuel']),
     rvTotal:   findCol(header, ['revendeur', 'total']),
     rvActifs:  findCol(header, ['revendeur', 'actif']),
+    equipTotal: findCol(header, ['equip', 'total']),
+    equipActif: findCol(header, ['equip', 'actif']),
+    recrutementYTD: findCol(header, ['recrutement', 'ytd']),
     scoreGlobal: findCol(header, ['score', 'global']),
     mention:   findCol(header, ['mention']),
     planAction: findCol(header, ['action']),
@@ -378,6 +447,11 @@ function buildRecords(header, rows) {
       zone: idx.zone !== -1 ? String(row[idx.zone] || '').trim() : '',
       depot: idx.depot !== -1 ? String(row[idx.depot] || '').trim() : '',
       sellinPct: sellinPct,
+      sellinPlanFcfa: (idx.sellinPlan !== -1 && !isNaN(parseFloat(row[idx.sellinPlan]))) ? parseFloat(row[idx.sellinPlan]) : null,
+      sellinMTDFcfa: (idx.sellinMTD !== -1 && !isNaN(parseFloat(row[idx.sellinMTD]))) ? parseFloat(row[idx.sellinMTD]) : null,
+      equipActif: idx.equipActif !== -1 ? parseFloat(row[idx.equipActif]) : null,
+      recrutementYTD: idx.recrutementYTD !== -1 ? parseFloat(row[idx.recrutementYTD]) : null,
+      hour: dateObj ? dateObj.getHours() + dateObj.getMinutes() / 60 : null,
       ventesTarget: idx.ventesTarget !== -1 ? parseFloat(row[idx.ventesTarget]) : null,
       ventesActuel: idx.ventesActuel !== -1 ? parseFloat(row[idx.ventesActuel]) : null,
       qmvpPlan: idx.qmvpPlan !== -1 ? parseFloat(row[idx.qmvpPlan]) : null,
@@ -486,6 +560,13 @@ function populateFilters(records) {
   if (ams.indexOf(currentAM) !== -1) amSel.value = currentAM;
   if (zones.indexOf(currentZone) !== -1) zoneSel.value = currentZone;
 
+  var dateSel = document.getElementById('filterDate');
+  var currentDate = dateSel.value;
+  var dates = uniqueSorted(records.map(function (r) { return r.dateLabel; }));
+  dateSel.innerHTML = '<option value="">Toutes les dates</option>' +
+    dates.map(function (d) { return '<option value="' + escapeAttr(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
+  if (dates.indexOf(currentDate) !== -1) dateSel.value = currentDate;
+
   updateDepotOptions();
 }
 
@@ -493,6 +574,26 @@ function uniqueSorted(arr) {
   var s = {};
   arr.forEach(function (v) { if (v) s[v] = true; });
   return Object.keys(s).sort();
+}
+
+// ── Snapshot "état actuel" ───────────────────────────────────────────────────
+// Un dépôt peut être rempli plusieurs fois (le MTD grossit avec le temps).
+// Pour les indicateurs "globaux" (CA MTD, Target, classification, etc.), on ne
+// doit garder QUE le relevé le plus récent de chaque dépôt, pas les additionner
+// tous — sinon un même dépôt rempli 2 fois compte en double et les anciens
+// chiffres (comme un vieux "45") polluent les résultats.
+function getLatestSnapshot(records) {
+  var map = {};
+  records.forEach(function (r) {
+    if (!r.depot) return;
+    var key = r.am + '||' + r.depot;
+    var existing = map[key];
+    if (!existing) { map[key] = r; return; }
+    var rTime = r.date ? r.date.getTime() : -1;
+    var eTime = existing.date ? existing.date.getTime() : -1;
+    if (rTime >= eTime) map[key] = r;
+  });
+  return Object.keys(map).map(function (k) { return map[k]; });
 }
 
 // Remplit le menu "Dépôt" avec uniquement les dépôts correspondant à l'AM et/ou
@@ -550,11 +651,13 @@ function getFilteredRecords() {
   var am = document.getElementById('filterAM').value;
   var zone = document.getElementById('filterZone').value;
   var depot = document.getElementById('filterDepot').value;
+  var dateFilter = document.getElementById('filterDate').value;
 
   return RECORDS.filter(function (r) {
     if (am && r.am !== am) return false;
     if (zone && r.zone !== zone) return false;
     if (depot && r.depot !== depot) return false;
+    if (dateFilter && r.dateLabel !== dateFilter) return false;
     return true;
   });
 }
@@ -565,11 +668,15 @@ function renderAll() {
   document.getElementById('filterCount').textContent =
     filtered.length + ' soumission' + (filtered.length !== 1 ? 's' : '') + ' affichée' + (filtered.length !== 1 ? 's' : '');
 
+  renderGlobalKPIs(filtered);
   renderKPIs(filtered);
   renderTrendChart(filtered);
   renderAMChart(filtered);
   renderMentionChart(filtered);
   renderVentesQMVPChart(filtered);
+  renderVisitesAM(filtered);
+  renderDepotEvolutionChart(filtered);
+  renderClassificationTables(filtered);
   renderRiskTable(filtered);
   renderTopTable(filtered);
   renderRecentTable(filtered);
@@ -582,6 +689,51 @@ function avg(arr) {
 }
 
 // ── KPI ─────────────────────────────────────────────────────────────────────
+function formatFcfa(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return Math.round(n).toLocaleString('fr-FR') + ' Fcfa';
+}
+function formatHour(h) {
+  if (h === null || h === undefined || isNaN(h)) return '—';
+  var hh = Math.floor(h);
+  var mm = Math.round((h - hh) * 60);
+  return (hh < 10 ? '0' : '') + hh + 'h' + (mm < 10 ? '0' : '') + mm;
+}
+
+// ── KPI Globaux (basés sur le dernier relevé de chaque dépôt) ───────────────
+function renderGlobalKPIs(records) {
+  var snapshot = getLatestSnapshot(records);
+
+  var ventesGlobalMTD = snapshot.reduce(function (s, r) { return s + (r.sellinMTDFcfa || 0); }, 0);
+  var targetGlobal = snapshot.reduce(function (s, r) { return s + (r.sellinPlanFcfa || 0); }, 0);
+  var pctRealisation = targetGlobal > 0 ? (ventesGlobalMTD / targetGlobal) * 100 : null;
+
+  var sumRvTotal = snapshot.reduce(function (s, r) { return s + (r.rvTotal || 0); }, 0);
+  var sumRvActifs = snapshot.reduce(function (s, r) { return s + (r.rvActifs || 0); }, 0);
+  var tauxRevendeurs = sumRvTotal > 0 ? (sumRvActifs / sumRvTotal) * 100 : null;
+
+  var recrutementGlobal = snapshot.reduce(function (s, r) { return s + (r.recrutementYTD || 0); }, 0);
+
+  var nbVisites = records.length; // total des saisies (pas le snapshot) = nombre de visites
+
+  var cards = [
+    { label: 'Ventes Global MTD', value: formatFcfa(ventesGlobalMTD), sub: snapshot.length + ' dépôt(s) pris en compte', cls: 'card-score' },
+    { label: 'Target Global', value: formatFcfa(targetGlobal), sub: 'Somme des objectifs par dépôt' },
+    { label: '% Réalisation / Target', value: pctRealisation !== null ? pctRealisation.toFixed(0) + '%' : '—', sub: 'Ventes Global MTD ÷ Target Global' },
+    { label: 'Taux revendeurs actifs', value: tauxRevendeurs !== null ? tauxRevendeurs.toFixed(0) + '%' : '—', sub: sumRvActifs + ' actifs / ' + sumRvTotal + ' total' },
+    { label: 'Recrutement Global', value: recrutementGlobal, sub: 'Cumul YTD, tous dépôts' },
+    { label: 'Nombre de visites', value: nbVisites, sub: 'Total des saisies sur la période filtrée' }
+  ];
+
+  document.getElementById('kpiGridGlobal').innerHTML = cards.map(function (c) {
+    return '<div class="kpi-card ' + (c.cls || '') + '">' +
+      '<div class="kpi-label">' + c.label + '</div>' +
+      '<div class="kpi-value small">' + c.value + '</div>' +
+      '<div class="kpi-sub">' + (c.sub || '') + '</div>' +
+      '</div>';
+  }).join('');
+}
+
 function renderKPIs(records) {
   var scores = records.map(function (r) { return r.score; });
   var scoreAvg = avg(scores);
@@ -808,6 +960,135 @@ function renderVentesQMVPChart(records) {
   });
 }
 
+// ── Visites par AM (nombre + heure moyenne) ─────────────────────────────────
+function renderVisitesAM(records) {
+  var byAM = {};
+  records.forEach(function (r) {
+    var key = r.am || '—';
+    if (!byAM[key]) byAM[key] = { count: 0, hours: [] };
+    byAM[key].count++;
+    if (r.hour !== null) byAM[key].hours.push(r.hour);
+  });
+
+  var amsSorted = Object.keys(byAM).sort(function (a, b) { return byAM[b].count - byAM[a].count; });
+  var tbody = document.querySelector('#tableVisitesAM tbody');
+  if (!amsSorted.length) {
+    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Pas encore de données</td></tr>';
+    return;
+  }
+  tbody.innerHTML = amsSorted.map(function (am) {
+    var d = byAM[am];
+    var avgHour = avg(d.hours);
+    return '<tr>' +
+      '<td class="depot-name">' + escapeHtml(am) + '</td>' +
+      '<td>' + d.count + '</td>' +
+      '<td>' + formatHour(avgHour) + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+// ── Classification A/B/C/D par CA MTD + Top5 + Watchlist ────────────────────
+function classifyDepot(mtd) {
+  if (mtd === null || mtd === undefined || isNaN(mtd)) return null;
+  if (mtd >= 5000000) return 'A';
+  if (mtd >= 2000000) return 'B';
+  if (mtd >= 1000000) return 'C';
+  return 'D';
+}
+function classBadge(cls) {
+  if (!cls) return '<span class="class-badge" style="background:#ccc;">?</span>';
+  return '<span class="class-badge class-' + cls.toLowerCase() + '">' + cls + '</span>';
+}
+
+function renderClassificationTables(records) {
+  var snapshot = getLatestSnapshot(records).map(function (r) {
+    return Object.assign({}, r, { classe: classifyDepot(r.sellinMTDFcfa) });
+  }).filter(function (r) { return r.classe !== null; });
+
+  // Résumé par classe
+  var counts = { A: 0, B: 0, C: 0, D: 0 };
+  snapshot.forEach(function (r) { counts[r.classe]++; });
+  var chipColors = { A: '#1B8A4B', B: '#2455B7', C: '#E8A33D', D: '#D93025' };
+  document.getElementById('classSummary').innerHTML = ['A', 'B', 'C', 'D'].map(function (c) {
+    return '<div class="class-chip" style="background:' + chipColors[c] + ';">' +
+      '<span class="n">' + counts[c] + '</span><span class="lbl">Classe ' + c + '</span></div>';
+  }).join('');
+
+  // Top 5 par CA MTD décroissant
+  var top5 = snapshot.slice().sort(function (a, b) { return (b.sellinMTDFcfa || 0) - (a.sellinMTDFcfa || 0); }).slice(0, 5);
+  var tbodyTop = document.querySelector('#tableTop5CA tbody');
+  tbodyTop.innerHTML = top5.length ? top5.map(function (r) {
+    return '<tr>' +
+      '<td>' + classBadge(r.classe) + '</td>' +
+      '<td>' + escapeHtml(r.am || '—') + '</td>' +
+      '<td class="depot-name">' + escapeHtml(r.depot || '—') + '</td>' +
+      '<td>' + formatFcfa(r.sellinMTDFcfa) + '</td>' +
+      '<td>' + (r.rvActifs !== null ? r.rvActifs : '—') + '</td>' +
+      '<td>' + (r.equipActif !== null ? r.equipActif : '—') + '</td>' +
+      '<td>' + (r.score !== null ? r.score : '—') + ' / 60</td>' +
+      '</tr>';
+  }).join('') : '<tr><td colspan="7" class="empty-state">Pas encore de données</td></tr>';
+
+  // Classe C & D : tous les dépôts concernés, triés du plus bas CA au plus haut
+  var classCD = snapshot.filter(function (r) { return r.classe === 'C' || r.classe === 'D'; })
+    .sort(function (a, b) { return (a.sellinMTDFcfa || 0) - (b.sellinMTDFcfa || 0); });
+  var tbodyCD = document.querySelector('#tableClassCD tbody');
+  tbodyCD.innerHTML = classCD.length ? classCD.map(function (r) {
+    return '<tr>' +
+      '<td>' + classBadge(r.classe) + '</td>' +
+      '<td>' + escapeHtml(r.am || '—') + '</td>' +
+      '<td class="depot-name">' + escapeHtml(r.depot || '—') + '</td>' +
+      '<td>' + formatFcfa(r.sellinMTDFcfa) + '</td>' +
+      '<td>' + (r.rvActifs !== null ? r.rvActifs : '—') + '</td>' +
+      '<td>' + (r.equipActif !== null ? r.equipActif : '—') + '</td>' +
+      '<td>' + (r.score !== null ? r.score : '—') + ' / 60</td>' +
+      '</tr>';
+  }).join('') : '<tr><td colspan="7" class="empty-state">Aucun dépôt en classe C ou D 🎉</td></tr>';
+}
+
+// ── Évolution du CA MTD par dépôt (multi-lignes) ────────────────────────────
+function renderDepotEvolutionChart(records) {
+  var withData = records.filter(function (r) { return r.sellinMTDFcfa !== null && r.date; });
+
+  // Limite aux 8 dépôts ayant le plus de points, pour rester lisible
+  var countByDepot = {};
+  withData.forEach(function (r) { countByDepot[r.depot] = (countByDepot[r.depot] || 0) + 1; });
+  var topDepots = Object.keys(countByDepot).sort(function (a, b) { return countByDepot[b] - countByDepot[a]; }).slice(0, 8);
+
+  var palette = ['#0A1E5E', '#00AEEF', '#1B8A4B', '#E8A33D', '#D93025', '#2455B7', '#8E44AD', '#16A085'];
+  var allLabels = uniqueSorted(withData.map(function (r) { return r.dateLabel; }));
+
+  var datasets = topDepots.map(function (depot, i) {
+    var byDate = {};
+    withData.filter(function (r) { return r.depot === depot; }).forEach(function (r) { byDate[r.dateLabel] = r.sellinMTDFcfa; });
+    return {
+      label: depot,
+      data: allLabels.map(function (d) { return byDate.hasOwnProperty(d) ? byDate[d] : null; }),
+      borderColor: palette[i % palette.length],
+      backgroundColor: palette[i % palette.length],
+      spanGaps: true, tension: 0.25, pointRadius: 3
+    };
+  });
+
+  var ctx = document.getElementById('chartDepotEvolution').getContext('2d');
+  if (CHARTS.depotEvo) CHARTS.depotEvo.destroy();
+  CHARTS.depotEvo = new Chart(ctx, {
+    type: 'line',
+    data: { labels: allLabels, datasets: datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+        datalabels: { display: false }
+      },
+      scales: {
+        y: { ticks: { callback: function (v) { return (v / 1000000).toFixed(1) + 'M'; } } },
+        x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 8 } }
+      }
+    }
+  });
+}
+
 // ── Tableaux d'aide à la décision ───────────────────────────────────────────
 function renderRiskTable(records) {
   var risky = records
@@ -887,11 +1168,13 @@ function init() {
   document.getElementById('btnRefresh').addEventListener('click', fetchData);
   document.getElementById('btnResetFilters').addEventListener('click', function () {
     document.getElementById('filterAM').value = '';
+    document.getElementById('filterDate').value = '';
     onAMFilterChange(); // remet la liste complète des zones + dépôts + renderAll()
   });
   document.getElementById('filterAM').addEventListener('change', onAMFilterChange);
   document.getElementById('filterZone').addEventListener('change', onZoneFilterChange);
   document.getElementById('filterDepot').addEventListener('change', renderAll);
+  document.getElementById('filterDate').addEventListener('change', renderAll);
 
   fetchData();
   setInterval(fetchData, AUTO_REFRESH_MS);
