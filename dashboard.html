@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dashboard Décisionnel · Fan Milk</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
 <style>
   :root{
     --navy:#0A1E5E; --blue:#1A3A8F; --mid-blue:#2455B7;
@@ -407,6 +407,29 @@ function uniqueSorted(arr) {
   return Object.keys(s).sort();
 }
 
+// Quand on choisit un AM, on ne garde dans "Zone" que les zones qui lui
+// appartiennent réellement, et on la sélectionne automatiquement s'il n'y en a qu'une.
+function onAMFilterChange() {
+  var amSel = document.getElementById('filterAM');
+  var zoneSel = document.getElementById('filterZone');
+  var am = amSel.value;
+
+  var zonesForAM = am
+    ? uniqueSorted(RECORDS.filter(function (r) { return r.am === am; }).map(function (r) { return r.zone; }))
+    : uniqueSorted(RECORDS.map(function (r) { return r.zone; }));
+
+  zoneSel.innerHTML = '<option value="">Toutes les zones</option>' +
+    zonesForAM.map(function (z) { return '<option value="' + escapeAttr(z) + '">' + escapeHtml(z) + '</option>'; }).join('');
+
+  if (am && zonesForAM.length === 1) {
+    zoneSel.value = zonesForAM[0]; // une seule zone pour cet AM → sélection directe
+  } else {
+    zoneSel.value = '';
+  }
+
+  renderAll();
+}
+
 function getFilteredRecords() {
   var am = document.getElementById('filterAM').value;
   var zone = document.getElementById('filterZone').value;
@@ -677,11 +700,10 @@ function init() {
   document.getElementById('btnRefresh').addEventListener('click', fetchData);
   document.getElementById('btnResetFilters').addEventListener('click', function () {
     document.getElementById('filterAM').value = '';
-    document.getElementById('filterZone').value = '';
     document.getElementById('filterDepot').value = '';
-    renderAll();
+    onAMFilterChange(); // remet la liste complète des zones + renderAll()
   });
-  document.getElementById('filterAM').addEventListener('change', renderAll);
+  document.getElementById('filterAM').addEventListener('change', onAMFilterChange);
   document.getElementById('filterZone').addEventListener('change', renderAll);
   document.getElementById('filterDepot').addEventListener('input', renderAll);
 
