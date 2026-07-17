@@ -193,6 +193,11 @@
     </div>
   </div>
 
+  <details class="panel" id="diagnosticPanel" style="cursor:pointer;">
+    <summary style="font-size:12px;font-weight:800;color:#000000;text-transform:uppercase;letter-spacing:0.6px;">🔍 Diagnostic des colonnes (clique pour ouvrir)</summary>
+    <div id="diagnosticContent" style="margin-top:14px;font-size:12px;"></div>
+  </details>
+
 </div>
 
 <script>
@@ -280,6 +285,8 @@ function hideError() {
 }
 
 // ── Construction des enregistrements exploitables ─────────────────────────
+var LAST_IDX = null; // pour le panneau de diagnostic
+
 function buildRecords(header, rows) {
   var idx = {
     date:      findCol(header, ['horodatage']),
@@ -289,7 +296,9 @@ function buildRecords(header, rows) {
     am:        findCol(header, ['am'], ['am', 'programme']), // exact-ish, voir fallback ci-dessous
     zone:      findCol(header, ['zone']),
     depot:     findCol(header, ['depot']),
-    sellinPct: findCol(header, ['sellin', 'pct']),
+    sellinPct: findCol(header, ['sellin', 'pct'], ['plan', 'mtd']),
+    sellinPlan: findCol(header, ['sellin', 'plan']),
+    sellinMTD: findCol(header, ['sellin', 'mtd']),
     rvTotal:   findCol(header, ['revendeur', 'total']),
     rvActifs:  findCol(header, ['revendeur', 'actif']),
     scoreGlobal: findCol(header, ['score', 'global']),
@@ -303,6 +312,8 @@ function buildRecords(header, rows) {
       if (norm(header[i]) === 'am') { idx.am = i; break; }
     }
   }
+  LAST_IDX = idx;
+  renderDiagnostic(header, idx);
 
   var out = [];
   for (var r = 0; r < rows.length; r++) {
@@ -319,6 +330,18 @@ function buildRecords(header, rows) {
     var mention = idx.mention !== -1 ? String(row[idx.mention] || '').trim() : '';
     if (!mention && score !== null) mention = scoreToMention(score);
 
+    // % Sell-in : colonne directe si trouvée, sinon calculé depuis Plan / MTD
+    var sellinPct = idx.sellinPct !== -1 ? parseFloat(row[idx.sellinPct]) : NaN;
+    if (isNaN(sellinPct)) {
+      var sellinPlanVal = idx.sellinPlan !== -1 ? parseFloat(row[idx.sellinPlan]) : NaN;
+      var sellinMTDVal = idx.sellinMTD !== -1 ? parseFloat(row[idx.sellinMTD]) : NaN;
+      if (!isNaN(sellinPlanVal) && sellinPlanVal > 0 && !isNaN(sellinMTDVal)) {
+        sellinPct = (sellinMTDVal / sellinPlanVal) * 100;
+      } else {
+        sellinPct = null;
+      }
+    }
+
     out.push({
       date: dateObj,
       dateLabel: dateObj ? dateObj.toLocaleDateString('fr-FR') : (dateRaw || '—'),
@@ -328,7 +351,7 @@ function buildRecords(header, rows) {
       am: idx.am !== -1 ? String(row[idx.am] || '').trim() : '',
       zone: idx.zone !== -1 ? String(row[idx.zone] || '').trim() : '',
       depot: idx.depot !== -1 ? String(row[idx.depot] || '').trim() : '',
-      sellinPct: idx.sellinPct !== -1 ? parseFloat(row[idx.sellinPct]) : null,
+      sellinPct: sellinPct,
       rvTotal: idx.rvTotal !== -1 ? parseFloat(row[idx.rvTotal]) : null,
       rvActifs: idx.rvActifs !== -1 ? parseFloat(row[idx.rvActifs]) : null,
       score: score,
@@ -368,6 +391,36 @@ function scoreToMention(score) {
   if (score < 30) return 'Faible';
   if (score < 45) return 'Moyen';
   return 'Bon';
+}
+
+// ── Panneau de diagnostic : montre quelles colonnes ont été trouvées ──────
+var FIELD_LABELS = {
+  date: 'Date / Horodatage', annee: 'Année', mois: 'Mois', semaine: 'Semaine',
+  am: 'AM', zone: 'Zone', depot: 'Nom du dépôt',
+  sellinPct: 'Sell-In % (direct)', sellinPlan: 'Sell-In Plan', sellinMTD: 'Sell-In MTD',
+  rvTotal: 'Total Revendeurs', rvActifs: 'Revendeurs Actifs',
+  scoreGlobal: 'Score Global', mention: 'Mention',
+  planAction: "Plan d'action / Actions", observations: 'Observations'
+};
+function renderDiagnostic(header, idx) {
+  var el = document.getElementById('diagnosticContent');
+  if (!el) return;
+  var rowsHtml = Object.keys(FIELD_LABELS).map(function (key) {
+    var i = idx[key];
+    var found = i !== undefined && i !== -1;
+    var colName = found ? header[i] : '—';
+    return '<tr>' +
+      '<td>' + FIELD_LABELS[key] + '</td>' +
+      '<td>' + (found ? '✅' : '❌') + '</td>' +
+      '<td>' + escapeHtml(colName) + '</td>' +
+      '</tr>';
+  }).join('');
+
+  el.innerHTML =
+    '<p style="margin-bottom:10px;color:#000;">Si un champ affiche ❌, envoie une capture de ce panneau — ça permet de corriger la correspondance de colonne en 1 minute.</p>' +
+    '<table class="data-table" style="margin-bottom:14px;"><thead><tr><th>Champ attendu</th><th>Trouvé ?</th><th>Colonne détectée</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
+    '<p style="color:#000;"><strong>En-tête brute de la feuille (' + header.length + ' colonnes) :</strong></p>' +
+    '<p style="color:#000;word-break:break-word;">' + header.map(function (h, i) { return (i + 1) + '. ' + escapeHtml(h || '(vide)'); }).join(' &nbsp;|&nbsp; ') + '</p>';
 }
 function mentionClass(mention) {
   var n = norm(mention);
