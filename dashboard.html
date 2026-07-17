@@ -139,7 +139,7 @@
     </div>
     <div class="filter-field" style="min-width:200px;">
       <label>Dépôt</label>
-      <input type="text" id="filterDepot" placeholder="Rechercher un dépôt…" />
+      <select id="filterDepot"><option value="">Tous les dépôts</option></select>
     </div>
     <button class="btn-reset-filters" id="btnResetFilters">Réinitialiser</button>
     <div class="filter-count" id="filterCount"></div>
@@ -485,12 +485,36 @@ function populateFilters(records) {
 
   if (ams.indexOf(currentAM) !== -1) amSel.value = currentAM;
   if (zones.indexOf(currentZone) !== -1) zoneSel.value = currentZone;
+
+  updateDepotOptions();
 }
 
 function uniqueSorted(arr) {
   var s = {};
   arr.forEach(function (v) { if (v) s[v] = true; });
   return Object.keys(s).sort();
+}
+
+// Remplit le menu "Dépôt" avec uniquement les dépôts correspondant à l'AM et/ou
+// la Zone actuellement sélectionnés (cascade AM → Zone → Dépôt).
+function updateDepotOptions() {
+  var am = document.getElementById('filterAM').value;
+  var zone = document.getElementById('filterZone').value;
+  var depotSel = document.getElementById('filterDepot');
+  var currentDepot = depotSel.value;
+
+  var scoped = RECORDS.filter(function (r) {
+    if (am && r.am !== am) return false;
+    if (zone && r.zone !== zone) return false;
+    return true;
+  });
+  var depots = uniqueSorted(scoped.map(function (r) { return r.depot; }));
+
+  depotSel.innerHTML = '<option value="">Tous les dépôts</option>' +
+    depots.map(function (d) { return '<option value="' + escapeAttr(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
+
+  if (depots.indexOf(currentDepot) !== -1) depotSel.value = currentDepot;
+  else depotSel.value = '';
 }
 
 // Quand on choisit un AM, on ne garde dans "Zone" que les zones qui lui
@@ -513,18 +537,24 @@ function onAMFilterChange() {
     zoneSel.value = '';
   }
 
+  updateDepotOptions();
+  renderAll();
+}
+
+function onZoneFilterChange() {
+  updateDepotOptions();
   renderAll();
 }
 
 function getFilteredRecords() {
   var am = document.getElementById('filterAM').value;
   var zone = document.getElementById('filterZone').value;
-  var depotQuery = norm(document.getElementById('filterDepot').value);
+  var depot = document.getElementById('filterDepot').value;
 
   return RECORDS.filter(function (r) {
     if (am && r.am !== am) return false;
     if (zone && r.zone !== zone) return false;
-    if (depotQuery && norm(r.depot).indexOf(depotQuery) === -1) return false;
+    if (depot && r.depot !== depot) return false;
     return true;
   });
 }
@@ -857,12 +887,11 @@ function init() {
   document.getElementById('btnRefresh').addEventListener('click', fetchData);
   document.getElementById('btnResetFilters').addEventListener('click', function () {
     document.getElementById('filterAM').value = '';
-    document.getElementById('filterDepot').value = '';
-    onAMFilterChange(); // remet la liste complète des zones + renderAll()
+    onAMFilterChange(); // remet la liste complète des zones + dépôts + renderAll()
   });
   document.getElementById('filterAM').addEventListener('change', onAMFilterChange);
-  document.getElementById('filterZone').addEventListener('change', renderAll);
-  document.getElementById('filterDepot').addEventListener('input', renderAll);
+  document.getElementById('filterZone').addEventListener('change', onZoneFilterChange);
+  document.getElementById('filterDepot').addEventListener('change', renderAll);
 
   fetchData();
   setInterval(fetchData, AUTO_REFRESH_MS);
