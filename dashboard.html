@@ -313,10 +313,19 @@ function buildRecords(header, rows) {
     sellinPct: findColMulti(header, [
                  ['sellin', 'pct'],
                  ['pct', 'realisation'],
-                 ['realisation']
-               ], ['plan', 'mtd']),
-    sellinPlan: findCol(header, ['sellin', 'plan']),
-    sellinMTD: findCol(header, ['sellin', 'mtd']),
+                 ['realisation'],
+                 ['pctr']
+               ], ['plan', 'mtd', 'target']),
+    sellinPlan: findColMulti(header, [
+                 ['sellin', 'plan'],
+                 ['target', 'fcfa'],
+                 ['target']
+               ], ['recrutement']),
+    sellinMTD: findColMulti(header, [
+                 ['sellin', 'mtd'],
+                 ['mtd', 'fcfa'],
+                 ['mtd']
+               ], ['recrutement']),
     ventesTarget: findCol(header, ['ventes', 'target']),
     ventesActuel: findCol(header, ['ventes', 'actuel']),
     qmvpPlan:  findCol(header, ['qmvp', 'plan']),
