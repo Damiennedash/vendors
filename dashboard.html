@@ -163,6 +163,11 @@
   </div>
 
   <div class="panel">
+    <div class="panel-title">🛒 Réalisation Ventes & QMVP (% de l'objectif)</div>
+    <div class="chart-box" style="height:220px;"><canvas id="chartVentesQMVP"></canvas></div>
+  </div>
+
+  <div class="panel">
     <div class="panel-title">🔴 Dépôts à surveiller en priorité <span class="badge-count" id="riskCount">0</span></div>
     <div class="table-scroll">
       <table class="data-table" id="tableRisk">
@@ -242,6 +247,15 @@ function findCol(header, include, exclude) {
   return -1;
 }
 
+// Essaie plusieurs combinaisons de tokens dans l'ordre, renvoie le premier trouvé.
+function findColMulti(header, candidateTokenSets, exclude) {
+  for (var c = 0; c < candidateTokenSets.length; c++) {
+    var i = findCol(header, candidateTokenSets[c], exclude);
+    if (i !== -1) return i;
+  }
+  return -1;
+}
+
 // ── Récupération des données depuis Apps Script ──────────────────────────
 function fetchData() {
   setRefreshing(true);
@@ -296,9 +310,17 @@ function buildRecords(header, rows) {
     am:        findCol(header, ['am'], ['am', 'programme']), // exact-ish, voir fallback ci-dessous
     zone:      findCol(header, ['zone']),
     depot:     findCol(header, ['depot']),
-    sellinPct: findCol(header, ['sellin', 'pct'], ['plan', 'mtd']),
+    sellinPct: findColMulti(header, [
+                 ['sellin', 'pct'],
+                 ['pct', 'realisation'],
+                 ['realisation']
+               ], ['plan', 'mtd']),
     sellinPlan: findCol(header, ['sellin', 'plan']),
     sellinMTD: findCol(header, ['sellin', 'mtd']),
+    ventesTarget: findCol(header, ['ventes', 'target']),
+    ventesActuel: findCol(header, ['ventes', 'actuel']),
+    qmvpPlan:  findCol(header, ['qmvp', 'plan']),
+    qmvpActuel: findCol(header, ['qmvp', 'actuel']),
     rvTotal:   findCol(header, ['revendeur', 'total']),
     rvActifs:  findCol(header, ['revendeur', 'actif']),
     scoreGlobal: findCol(header, ['score', 'global']),
@@ -352,6 +374,10 @@ function buildRecords(header, rows) {
       zone: idx.zone !== -1 ? String(row[idx.zone] || '').trim() : '',
       depot: idx.depot !== -1 ? String(row[idx.depot] || '').trim() : '',
       sellinPct: sellinPct,
+      ventesTarget: idx.ventesTarget !== -1 ? parseFloat(row[idx.ventesTarget]) : null,
+      ventesActuel: idx.ventesActuel !== -1 ? parseFloat(row[idx.ventesActuel]) : null,
+      qmvpPlan: idx.qmvpPlan !== -1 ? parseFloat(row[idx.qmvpPlan]) : null,
+      qmvpActuel: idx.qmvpActuel !== -1 ? parseFloat(row[idx.qmvpActuel]) : null,
       rvTotal: idx.rvTotal !== -1 ? parseFloat(row[idx.rvTotal]) : null,
       rvActifs: idx.rvActifs !== -1 ? parseFloat(row[idx.rvActifs]) : null,
       score: score,
@@ -398,6 +424,8 @@ var FIELD_LABELS = {
   date: 'Date / Horodatage', annee: 'Année', mois: 'Mois', semaine: 'Semaine',
   am: 'AM', zone: 'Zone', depot: 'Nom du dépôt',
   sellinPct: 'Sell-In % (direct)', sellinPlan: 'Sell-In Plan', sellinMTD: 'Sell-In MTD',
+  ventesTarget: 'Ventes Objectif', ventesActuel: 'Ventes Actuel',
+  qmvpPlan: 'QMVP Objectif', qmvpActuel: 'QMVP Actuel',
   rvTotal: 'Total Revendeurs', rvActifs: 'Revendeurs Actifs',
   scoreGlobal: 'Score Global', mention: 'Mention',
   planAction: "Plan d'action / Actions", observations: 'Observations'
@@ -507,6 +535,7 @@ function renderAll() {
   renderTrendChart(filtered);
   renderAMChart(filtered);
   renderMentionChart(filtered);
+  renderVentesQMVPChart(filtered);
   renderRiskTable(filtered);
   renderTopTable(filtered);
   renderRecentTable(filtered);
@@ -696,6 +725,51 @@ function renderMentionChart(records) {
           formatter: function (v) { return v > 0 ? v : ''; }
         }
       }
+    }
+  });
+}
+
+function renderVentesQMVPChart(records) {
+  var ventesPcts = records.map(function (r) {
+    if (r.ventesTarget && r.ventesTarget > 0 && r.ventesActuel !== null) {
+      return (r.ventesActuel / r.ventesTarget) * 100;
+    }
+    return null;
+  });
+  var qmvpPcts = records.map(function (r) {
+    if (r.qmvpPlan && r.qmvpPlan > 0 && r.qmvpActuel !== null) {
+      return (r.qmvpActuel / r.qmvpPlan) * 100;
+    }
+    return null;
+  });
+
+  var ventesAvg = avg(ventesPcts);
+  var qmvpAvg = avg(qmvpPcts);
+
+  var ctx = document.getElementById('chartVentesQMVP').getContext('2d');
+  if (CHARTS.ventesQmvp) CHARTS.ventesQmvp.destroy();
+  CHARTS.ventesQmvp = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Ventes (Objectif → Actuel)', 'QMVP (Objectif → Actuel)'],
+      datasets: [{
+        data: [ventesAvg !== null ? ventesAvg : 0, qmvpAvg !== null ? qmvpAvg : 0],
+        backgroundColor: [CHART_COLORS.navy, CHART_COLORS.accent],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          align: 'end', anchor: 'end',
+          color: CHART_COLORS.navy, font: { weight: '800', size: 13 },
+          formatter: function (v) { return v.toFixed(0) + '%'; }
+        }
+      },
+      scales: { x: { min: 0, max: 120, ticks: { callback: function (v) { return v + '%'; } } } }
     }
   });
 }
