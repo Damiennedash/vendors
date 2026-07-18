@@ -960,16 +960,6 @@ function renderKPIs(records) {
       sub: bonCount + ' / ' + records.length + t('subEvaluationsSlash')
     },
     {
-      label: t('kpiSellin'),
-      value: sellinAvg !== null ? sellinAvg.toFixed(0) + '%' : '—',
-      sub: t('subMoyennePeriode')
-    },
-    {
-      label: t('kpiTauxActivation'),
-      value: tauxActivation !== null ? tauxActivation.toFixed(0) + '%' : '—',
-      sub: t('subActifsTotalRevendeurs')
-    },
-    {
       cls: 'card-risk', label: t('kpiDepotsSurveiller'),
       value: riskCount, sub: t('subMentionsMF')
     }
