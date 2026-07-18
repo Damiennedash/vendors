@@ -162,6 +162,10 @@
       <select id="filterDepot"><option value="" data-i18n="allDepots">Tous les dépôts</option></select>
     </div>
     <div class="filter-field">
+      <label data-i18n="lblMois">Mois</label>
+      <select id="filterMois"><option value="" data-i18n="allMois">Tous les mois</option></select>
+    </div>
+    <div class="filter-field">
       <label data-i18n="lblDate">Date</label>
       <select id="filterDate"><option value="" data-i18n="allDates">Toutes les dates</option></select>
     </div>
@@ -195,6 +199,16 @@
     <div style="font-size:11px;color:#000;margin-top:12px;" data-i18n="classLegend">
       Classe A : ≥ 5M Fcfa &nbsp;·&nbsp; Classe B : 2M – 5M &nbsp;·&nbsp; Classe C : 1M – 2M &nbsp;·&nbsp; Classe D : &lt; 1M
       <br/>(basé sur le dernier CA MTD connu de chaque dépôt)
+    </div>
+  </div>
+
+  <div class="panel" id="classFilterPanel" style="display:none;">
+    <div class="panel-title" id="classFilterTitle">📋 Dépôts de la classe</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableClassFilter">
+        <thead><tr><th data-i18n="thClasse">Classe</th><th data-i18n="lblAM">AM</th><th data-i18n="thDepot">Dépôt</th><th data-i18n="thCAMTD">CA MTD</th><th data-i18n="thRvActifs">Revendeurs actifs</th><th data-i18n="thEquipOp">Équip. opérationnels</th><th data-i18n="thScore">Score</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
@@ -298,18 +312,19 @@ var I18N = {
   fr: {
     headerTitle: 'Dashboard Décisionnel', headerSub: 'Fan Milk · Suivi Terrain',
     btnRefresh: 'Actualiser', loadingText: 'Chargement des données…',
-    lblAM: 'AM', lblZone: 'Zone', lblSousZone: 'Sous-zone', lblDepot: 'Dépôt', lblDate: 'Date',
-    allAM: 'Tous les AM', allZones: 'Toutes les zones', allSousZones: 'Toutes les sous-zones', allDepots: 'Tous les dépôts', allDates: 'Toutes les dates',
+    lblAM: 'AM', lblZone: 'Zone', lblSousZone: 'Sous-zone', lblDepot: 'Dépôt', lblMois: 'Mois', lblDate: 'Date',
+    allAM: 'Tous les AM', allZones: 'Toutes les zones', allSousZones: 'Toutes les sous-zones', allDepots: 'Tous les dépôts', allMois: 'Tous les mois', allDates: 'Toutes les dates',
     btnResetFilters: 'Supprimer les filtres',
     titleGlobalKPI: '📊 Indicateurs globaux',
     subGlobalKPI: '(dernier relevé de chaque dépôt — se met à jour à chaque nouvelle saisie)',
-    titleVisitesAM: '🕐 Visites par AM', thNbVisites: 'Nombre de visites', thHeureMoy: 'Heure moyenne de visite',
+    titleVisitesAM: '🕐 Visites par AM', thNbVisites: 'Nombre de visites', thHeureMoy: 'Temps passé sur le terrain',
     titleEvoCA: '📉 CA MTD — Dépôts à faible score',
     titleClassRepartition: '🏷️ Répartition par classe (CA MTD)',
     classLegend: 'Classe A : ≥ 5M Fcfa &nbsp;·&nbsp; Classe B : 2M – 5M &nbsp;·&nbsp; Classe C : 1M – 2M &nbsp;·&nbsp; Classe D : < 1M<br/>(basé sur le dernier CA MTD connu de chaque dépôt)',
     titleTop5: '🏆 Top 5 des meilleurs dépôts (CA MTD)',
     titleClassCD: '⚠️ Dépôts en Classe C & D (CA MTD faible)',
     thClasse: 'Classe', thDepot: 'Dépôt', thCAMTD: 'CA MTD', thRvActifs: 'Revendeurs actifs', thEquipOp: 'Équip. opérationnels', thScore: 'Score',
+    titleClassFilterPrefix: 'Dépôts de la classe', classeMot: 'Classe',
     titleVentesQMVP: "🛒 Réalisation Ventes & QMVP (% de l'objectif)",
     titlePeriodeKPI: '📅 Indicateurs sur la période filtrée',
     titleEvoScore: '📈 Évolution du score global', titleScoreAM: '🏷️ Score moyen par AM', titleMentions: '🎯 Répartition des mentions',
@@ -335,18 +350,19 @@ var I18N = {
   en: {
     headerTitle: 'Decision Dashboard', headerSub: 'Fan Milk · Field Tracking',
     btnRefresh: 'Refresh', loadingText: 'Loading data…',
-    lblAM: 'AM', lblZone: 'Zone', lblSousZone: 'Sub-zone', lblDepot: 'Depot', lblDate: 'Date',
-    allAM: 'All AMs', allZones: 'All zones', allSousZones: 'All sub-zones', allDepots: 'All depots', allDates: 'All dates',
+    lblAM: 'AM', lblZone: 'Zone', lblSousZone: 'Sub-zone', lblDepot: 'Depot', lblMois: 'Month', lblDate: 'Date',
+    allAM: 'All AMs', allZones: 'All zones', allSousZones: 'All sub-zones', allDepots: 'All depots', allMois: 'All months', allDates: 'All dates',
     btnResetFilters: 'Clear filters',
     titleGlobalKPI: '📊 Global Indicators',
     subGlobalKPI: '(latest reading per depot — updates with every new entry)',
-    titleVisitesAM: '🕐 Visits per AM', thNbVisites: 'Number of visits', thHeureMoy: 'Average visit time',
+    titleVisitesAM: '🕐 Visits per AM', thNbVisites: 'Number of visits', thHeureMoy: 'Time spent in the field',
     titleEvoCA: '📉 MTD Revenue — Low-Scoring Depots',
     titleClassRepartition: '🏷️ Class Breakdown (MTD Revenue)',
     classLegend: 'Class A: ≥ 5M Fcfa &nbsp;·&nbsp; Class B: 2M – 5M &nbsp;·&nbsp; Class C: 1M – 2M &nbsp;·&nbsp; Class D: < 1M<br/>(based on the latest known MTD revenue per depot)',
     titleTop5: '🏆 Top 5 Best Depots (MTD Revenue)',
     titleClassCD: '⚠️ Depots in Class C & D (Low MTD Revenue)',
     thClasse: 'Class', thDepot: 'Depot', thCAMTD: 'MTD Revenue', thRvActifs: 'Active Resellers', thEquipOp: 'Operational Equip.', thScore: 'Score',
+    titleClassFilterPrefix: 'Depots in class', classeMot: 'Class',
     titleVentesQMVP: '🛒 Sales & QMVP Achievement (% of target)',
     titlePeriodeKPI: '📅 Indicators for Filtered Period',
     titleEvoScore: '📈 Global Score Evolution', titleScoreAM: '🏷️ Average Score per AM', titleMentions: '🎯 Rating Breakdown',
@@ -692,6 +708,13 @@ function populateFilters(records) {
     dates.map(function (d) { return '<option value="' + escapeAttr(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
   if (dates.indexOf(currentDate) !== -1) dateSel.value = currentDate;
 
+  var moisSel = document.getElementById('filterMois');
+  var currentMois = moisSel.value;
+  var moisList = uniqueSorted(records.map(function (r) { return r.mois; }));
+  moisSel.innerHTML = '<option value="">' + t('allMois') + '</option>' +
+    moisList.map(function (m) { return '<option value="' + escapeAttr(m) + '">' + escapeHtml(m) + '</option>'; }).join('');
+  if (moisList.indexOf(currentMois) !== -1) moisSel.value = currentMois;
+
   updateSousZoneOptions();
   updateDepotOptions();
 }
@@ -808,6 +831,7 @@ function getFilteredRecords() {
   var zone = document.getElementById('filterZone').value;
   var sousZone = document.getElementById('filterSousZone').value;
   var depot = document.getElementById('filterDepot').value;
+  var mois = document.getElementById('filterMois').value;
   var dateFilter = document.getElementById('filterDate').value;
 
   return RECORDS.filter(function (r) {
@@ -815,6 +839,7 @@ function getFilteredRecords() {
     if (zone && r.zone !== zone) return false;
     if (sousZone && r.sousZone !== sousZone) return false;
     if (depot && r.depot !== depot) return false;
+    if (mois && r.mois !== mois) return false;
     if (dateFilter && r.dateLabel !== dateFilter) return false;
     return true;
   });
@@ -856,6 +881,13 @@ function formatHour(h) {
   var hh = Math.floor(h);
   var mm = Math.round((h - hh) * 60);
   return (hh < 10 ? '0' : '') + hh + 'h' + (mm < 10 ? '0' : '') + mm;
+}
+function formatDuration(h) {
+  if (h === null || h === undefined || isNaN(h) || h <= 0) return '—';
+  var hh = Math.floor(h);
+  var mm = Math.round((h - hh) * 60);
+  if (mm === 60) { hh += 1; mm = 0; }
+  return hh + 'h' + (mm < 10 ? '0' : '') + mm;
 }
 
 // ── KPI Globaux (basés sur le dernier relevé de chaque dépôt) ───────────────
@@ -1123,9 +1155,11 @@ function renderVisitesAM(records) {
   var byAM = {};
   records.forEach(function (r) {
     var key = r.am || '—';
-    if (!byAM[key]) byAM[key] = { count: 0, hours: [] };
+    if (!byAM[key]) byAM[key] = { count: 0, byDay: {} };
     byAM[key].count++;
-    if (r.hour !== null) byAM[key].hours.push(r.hour);
+    var dayKey = r.dateLabel || '?';
+    if (!byAM[key].byDay[dayKey]) byAM[key].byDay[dayKey] = [];
+    if (r.hour !== null) byAM[key].byDay[dayKey].push(r.hour);
   });
 
   var amsSorted = Object.keys(byAM).sort(function (a, b) { return byAM[b].count - byAM[a].count; });
@@ -1136,11 +1170,22 @@ function renderVisitesAM(records) {
   }
   tbody.innerHTML = amsSorted.map(function (am) {
     var d = byAM[am];
-    var avgHour = avg(d.hours);
+    // Temps cumulé sur le terrain : pour chaque jour où l'AM a fait ≥2 visites,
+    // on prend (heure de la dernière visite − heure de la première) et on
+    // additionne ça sur tous les jours. Un jour avec une seule visite ne
+    // rajoute aucune durée (on ne peut pas calculer un temps passé avec un
+    // seul point), mais compte bien dans le nombre de visites.
+    var totalHours = 0;
+    Object.keys(d.byDay).forEach(function (day) {
+      var hours = d.byDay[day];
+      if (hours.length >= 2) {
+        totalHours += (Math.max.apply(null, hours) - Math.min.apply(null, hours));
+      }
+    });
     return '<tr>' +
       '<td class="depot-name">' + escapeHtml(am) + '</td>' +
       '<td>' + d.count + '</td>' +
-      '<td>' + formatHour(avgHour) + '</td>' +
+      '<td>' + formatDuration(totalHours) + '</td>' +
       '</tr>';
   }).join('');
 }
@@ -1158,19 +1203,53 @@ function classBadge(cls) {
   return '<span class="class-badge class-' + cls.toLowerCase() + '">' + cls + '</span>';
 }
 
+var SELECTED_CLASS = null; // classe A/B/C/D actuellement affichée en détail, ou null
+
 function renderClassificationTables(records) {
   var snapshot = getLatestSnapshot(records).map(function (r) {
     return Object.assign({}, r, { classe: classifyDepot(r.sellinMTDFcfa) });
   }).filter(function (r) { return r.classe !== null; });
 
-  // Résumé par classe
+  // Résumé par classe (chips cliquables)
   var counts = { A: 0, B: 0, C: 0, D: 0 };
   snapshot.forEach(function (r) { counts[r.classe]++; });
   var chipColors = { A: '#1B8A4B', B: '#2455B7', C: '#E8A33D', D: '#D93025' };
   document.getElementById('classSummary').innerHTML = ['A', 'B', 'C', 'D'].map(function (c) {
-    return '<div class="class-chip" style="background:' + chipColors[c] + ';">' +
-      '<span class="n">' + counts[c] + '</span><span class="lbl">Classe ' + c + '</span></div>';
+    var active = (SELECTED_CLASS === c);
+    return '<div class="class-chip" data-classe="' + c + '" style="background:' + chipColors[c] + ';cursor:pointer;' +
+      (active ? 'box-shadow:0 0 0 3px rgba(0,0,0,0.35);' : '') + '">' +
+      '<span class="n">' + counts[c] + '</span><span class="lbl">' + t('classeMot') + ' ' + c + '</span></div>';
   }).join('');
+  document.querySelectorAll('#classSummary .class-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      var c = chip.getAttribute('data-classe');
+      SELECTED_CLASS = (SELECTED_CLASS === c) ? null : c; // re-cliquer dessus referme le détail
+      renderClassificationTables(getFilteredRecords());
+    });
+  });
+
+  // Panneau détail : tous les dépôts de la classe cliquée
+  var filterPanel = document.getElementById('classFilterPanel');
+  if (SELECTED_CLASS) {
+    filterPanel.style.display = 'block';
+    document.getElementById('classFilterTitle').textContent = '📋 ' + t('titleClassFilterPrefix') + ' ' + SELECTED_CLASS;
+    var forClass = snapshot.filter(function (r) { return r.classe === SELECTED_CLASS; })
+      .sort(function (a, b) { return (b.sellinMTDFcfa || 0) - (a.sellinMTDFcfa || 0); });
+    var tbodyFilter = document.querySelector('#tableClassFilter tbody');
+    tbodyFilter.innerHTML = forClass.length ? forClass.map(function (r) {
+      return '<tr>' +
+        '<td>' + classBadge(r.classe) + '</td>' +
+        '<td>' + escapeHtml(r.am || '—') + '</td>' +
+        '<td class="depot-name">' + escapeHtml(r.depot || '—') + '</td>' +
+        '<td>' + formatFcfa(r.sellinMTDFcfa) + '</td>' +
+        '<td>' + (r.rvActifs !== null ? r.rvActifs : '—') + '</td>' +
+        '<td>' + (r.equipActif !== null ? r.equipActif : '—') + '</td>' +
+        '<td>' + (r.score !== null ? r.score : '—') + ' / 60</td>' +
+        '</tr>';
+    }).join('') : '<tr><td colspan="7" class="empty-state">' + t('emptyGeneric') + '</td></tr>';
+  } else {
+    filterPanel.style.display = 'none';
+  }
 
   // Top 5 par CA MTD décroissant
   var top5 = snapshot.slice().sort(function (a, b) { return (b.sellinMTDFcfa || 0) - (a.sellinMTDFcfa || 0); }).slice(0, 5);
@@ -1243,7 +1322,12 @@ function renderDepotEvolutionChart(records) {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
-        datalabels: { display: false }
+        datalabels: {
+          display: function (ctx) { return ctx.dataset.data[ctx.dataIndex] > 0; },
+          anchor: 'end', align: 'top', rotation: -90,
+          color: '#000000', font: { weight: '800', size: 9 },
+          formatter: function (v) { return v ? (v / 1000000).toFixed(2) + 'M' : ''; }
+        }
       },
       scales: {
         y: { ticks: { callback: function (v) { return (v / 1000000).toFixed(1) + 'M'; } } },
@@ -1339,13 +1423,16 @@ function init() {
   document.getElementById('btnResetFilters').addEventListener('click', function () {
     document.getElementById('filterAM').value = '';
     document.getElementById('filterSousZone').value = '';
+    document.getElementById('filterDepot').value = '';
     document.getElementById('filterDate').value = '';
+    document.getElementById('filterMois').value = '';
     onAMFilterChange(); // remet la liste complète des zones + sous-zones + dépôts + renderAll()
   });
   document.getElementById('filterAM').addEventListener('change', onAMFilterChange);
   document.getElementById('filterZone').addEventListener('change', onZoneFilterChange);
   document.getElementById('filterSousZone').addEventListener('change', onSousZoneFilterChange);
   document.getElementById('filterDepot').addEventListener('change', renderAll);
+  document.getElementById('filterMois').addEventListener('change', renderAll);
   document.getElementById('filterDate').addEventListener('change', renderAll);
 
   fetchData();
