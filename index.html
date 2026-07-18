@@ -124,6 +124,7 @@
     /* FORMS */
     label{display:block;font-size:10px;font-weight:600;color:#000000;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
     input[type="text"],input[type="number"],input[type="date"],input[type="password"],select,textarea{width:100%;padding:9px 10px;border:1.5px solid var(--gray);border-radius:6px;font-size:13px;color:var(--text);background:var(--white);transition:border-color 0.2s;outline:none;}
+    select.locked-field{pointer-events:none;background:#f0f4f8;color:var(--dark-gray);}
     input:focus,select:focus,textarea:focus{border-color:var(--accent);}
     input[readonly]{background:#f0f4f8;color:var(--dark-gray);cursor:not-allowed;}
     textarea{resize:vertical;min-height:70px;}
@@ -272,6 +273,13 @@
         <select name="nom_depot" id="f_depot" required>
           <option value="">— Choisir l'AM d'abord —</option>
         </select>
+      </div>
+    </div>
+    <!-- Ligne 4 : Sous-zone (auto selon le dépôt) -->
+    <div class="period-row" style="grid-template-columns:1fr;">
+      <div>
+        <label>Sous-zone</label>
+        <input type="text" name="sous_zone" id="f_sous_zone" readonly placeholder="Auto selon dépôt" style="background:#f0f4f8;color:var(--dark-gray);" />
       </div>
     </div>
   </div>
@@ -652,13 +660,42 @@
   }
 
   // ── Dépôt → Zone (auto) ──────────────────────────────────────────────────
+  // ── Sous-zones (par dépôt) ───────────────────────────────────────────────
+  // Clés normalisées (majuscules, sans "Ets", sans apostrophe) pour matcher
+  // même si l'orthographe varie légèrement.
+  function normDepotName(s) {
+    return String(s || '')
+      .toUpperCase()
+      .replace(/^ETS\s+/, '')
+      .replace(/['’]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  var SOUS_ZONES = {
+    'NADONIELA': 'Bé', 'NADONELLA': 'Bé', 'NADONIELLA': 'Bé',
+    'NADONIELLA B': 'Bé', 'NADONELLA B': 'Bé',
+    'GERM DOSSEH': 'Bé',
+    'NBUKE RAMCO': 'GRAND LOME', 'N BUKE RAMCO': 'GRAND LOME',
+    'SODOBEL': 'GRAND LOME',
+    'SOVI': 'HEDZRANAWOE',
+    'GISPA': 'TOTSI',
+    'ST MARTIN': 'Agoé',
+    'SUPER DEPOT': 'Agoé'
+  };
+
   function onDepotChange() {
     var depotEl = $('f_depot');
     var zoneEl  = $('f_zone');
+    var sousZoneEl = $('f_sous_zone');
     if (!depotEl || !zoneEl) return;
     var selected = depotEl.options[depotEl.selectedIndex];
     var zone = selected ? selected.getAttribute('data-zone') : '';
     if (zone) zoneEl.value = zone;
+
+    if (sousZoneEl) {
+      var key = normDepotName(depotEl.value);
+      sousZoneEl.value = SOUS_ZONES[key] || '';
+    }
   }
 
   // ── % Réalisation ─────────────────────────────────────────────────────────
@@ -737,10 +774,17 @@
     if (!amEl) return;
     if (role && role !== 'ADMIN' && AM_DATA[role]) {
       amEl.value = role;
-      amEl.disabled = true;
+      // ⚠️ On NE met PAS disabled=true : un champ désactivé n'est jamais
+      // envoyé avec le formulaire (FormData l'ignore), donc l'AM se
+      // perdait à l'enregistrement. On verrouille juste visuellement.
+      amEl.disabled = false;
+      amEl.classList.add('locked-field');
+      amEl.setAttribute('tabindex', '-1');
       onAmChange();
     } else {
       amEl.disabled = false;
+      amEl.classList.remove('locked-field');
+      amEl.removeAttribute('tabindex');
     }
   }
 
