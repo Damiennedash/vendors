@@ -162,6 +162,7 @@
       <select id="filterDepot"><option value="" data-i18n="allDepots">Tous les dépôts</option></select>
     </div>
     <div class="filter-field">
+<<<<<<< HEAD
       <label data-i18n="lblDate">Date</label>
       <select id="filterDate"><option value="" data-i18n="allDates">Toutes les dates</option></select>
     </div>
@@ -186,38 +187,75 @@
 
   <div class="panel">
     <div class="panel-title" data-i18n="titleEvoCA">📈 Évolution du CA MTD par dépôt</div>
+=======
+      <label>Date</label>
+      <select id="filterDate"><option value="">Toutes les dates</option></select>
+    </div>
+    <button class="btn-reset-filters" id="btnResetFilters">Réinitialiser</button>
+    <div class="filter-count" id="filterCount"></div>
+  </div>
+
+  <div class="panel-title" style="margin:4px 0 10px 2px;">📊 Indicateurs globaux <span style="font-weight:600;text-transform:none;letter-spacing:0;color:var(--dark-gray);">(dernier relevé de chaque dépôt — se met à jour à chaque nouvelle saisie)</span></div>
+  <div class="kpi-grid" id="kpiGridGlobal"></div>
+
+  <!-- ══════════════ TOUT CE QUI EST CHIFFRE D'AFFAIRES (CA MTD) EN PREMIER ══════════════ -->
+
+  <div class="panel">
+    <div class="panel-title">📈 Évolution du CA MTD par dépôt</div>
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     <div class="chart-box" style="height:280px;"><canvas id="chartDepotEvolution"></canvas></div>
   </div>
 
   <div class="panel">
+<<<<<<< HEAD
     <div class="panel-title" data-i18n="titleClassRepartition">🏷️ Répartition par classe (CA MTD)</div>
     <div id="classSummary" style="display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;"></div>
     <div style="font-size:11px;color:#000;margin-top:12px;" data-i18n="classLegend">
+=======
+    <div class="panel-title">🏷️ Répartition par classe (CA MTD)</div>
+    <div id="classSummary" style="display:flex;gap:14px;flex-wrap:wrap;padding-top:6px;"></div>
+    <div style="font-size:11px;color:#000;margin-top:12px;">
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
       Classe A : ≥ 5M Fcfa &nbsp;·&nbsp; Classe B : 2M – 5M &nbsp;·&nbsp; Classe C : 1M – 2M &nbsp;·&nbsp; Classe D : &lt; 1M
       <br/>(basé sur le dernier CA MTD connu de chaque dépôt)
     </div>
   </div>
 
   <div class="panel">
+<<<<<<< HEAD
     <div class="panel-title" data-i18n="titleTop5">🏆 Top 5 des meilleurs dépôts (CA MTD)</div>
     <div class="table-scroll">
       <table class="data-table" id="tableTop5CA">
         <thead><tr><th data-i18n="thClasse">Classe</th><th data-i18n="lblAM">AM</th><th data-i18n="thDepot">Dépôt</th><th data-i18n="thCAMTD">CA MTD</th><th data-i18n="thRvActifs">Revendeurs actifs</th><th data-i18n="thEquipOp">Équip. opérationnels</th><th data-i18n="thScore">Score</th></tr></thead>
+=======
+    <div class="panel-title">🏆 Top 5 des meilleurs dépôts (CA MTD)</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableTop5CA">
+        <thead><tr><th>Classe</th><th>AM</th><th>Dépôt</th><th>CA MTD</th><th>Revendeurs actifs</th><th>Équip. opérationnels</th><th>Score</th></tr></thead>
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
         <tbody></tbody>
       </table>
     </div>
   </div>
 
   <div class="panel">
+<<<<<<< HEAD
     <div class="panel-title" data-i18n="titleClassCD">⚠️ Dépôts en Classe C &amp; D (CA MTD faible)</div>
     <div class="table-scroll">
       <table class="data-table" id="tableClassCD">
         <thead><tr><th data-i18n="thClasse">Classe</th><th data-i18n="lblAM">AM</th><th data-i18n="thDepot">Dépôt</th><th data-i18n="thCAMTD">CA MTD</th><th data-i18n="thRvActifs">Revendeurs actifs</th><th data-i18n="thEquipOp">Équip. opérationnels</th><th data-i18n="thScore">Score</th></tr></thead>
+=======
+    <div class="panel-title">⚠️ Dépôts en Classe C &amp; D (CA MTD faible)</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableClassCD">
+        <thead><tr><th>Classe</th><th>AM</th><th>Dépôt</th><th>CA MTD</th><th>Revendeurs actifs</th><th>Équip. opérationnels</th><th>Score</th></tr></thead>
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
         <tbody></tbody>
       </table>
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- ══════════════ INDICATEURS NON LIÉS AU SCORE (VENTES/QMVP) ══════════════ -->
 
   <div class="panel">
@@ -228,6 +266,28 @@
   <!-- ══════════════ TOUT CE QUI CONCERNE LE SCORE, EN DERNIÈRE POSITION ══════════════ -->
 
   <div class="panel-title" style="margin:20px 0 10px 2px;" data-i18n="titlePeriodeKPI">📅 Indicateurs sur la période filtrée</div>
+=======
+  <!-- ══════════════ INDICATEURS NON LIÉS AU SCORE (VENTES/QMVP, VISITES) ══════════════ -->
+
+  <div class="panel">
+    <div class="panel-title">🛒 Réalisation Ventes & QMVP (% de l'objectif)</div>
+    <div class="chart-box" style="height:220px;"><canvas id="chartVentesQMVP"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🕐 Visites par AM</div>
+    <div class="table-scroll">
+      <table class="data-table" id="tableVisitesAM">
+        <thead><tr><th>AM</th><th>Nombre de visites</th><th>Heure moyenne de visite</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════ TOUT CE QUI CONCERNE LE SCORE, EN DERNIÈRE POSITION ══════════════ -->
+
+  <div class="panel-title" style="margin:20px 0 10px 2px;">📅 Indicateurs sur la période filtrée</div>
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
   <div class="kpi-grid" id="kpiGrid"></div>
 
   <div class="charts-row">
@@ -246,7 +306,11 @@
   </div>
 
   <div class="panel">
+<<<<<<< HEAD
     <div class="panel-title"><span data-i18n="titleRisk">🔴 Dépôts à surveiller en priorité</span> <span class="badge-count" id="riskCount">0</span></div>
+=======
+    <div class="panel-title">🔴 Dépôts à surveiller en priorité <span class="badge-count" id="riskCount">0</span></div>
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     <div class="table-scroll">
       <table class="data-table" id="tableRisk">
         <thead><tr><th data-i18n="thDate">Date</th><th data-i18n="lblAM">AM</th><th data-i18n="lblZone">Zone</th><th data-i18n="thDepot">Dépôt</th><th data-i18n="thScore">Score</th><th data-i18n="thMention">Mention</th><th data-i18n="thPlanObs">Plan d'action / Observations</th></tr></thead>
@@ -688,11 +752,18 @@ function populateFilters(records) {
   var dateSel = document.getElementById('filterDate');
   var currentDate = dateSel.value;
   var dates = uniqueSorted(records.map(function (r) { return r.dateLabel; }));
+<<<<<<< HEAD
   dateSel.innerHTML = '<option value="">' + t('allDates') + '</option>' +
     dates.map(function (d) { return '<option value="' + escapeAttr(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
   if (dates.indexOf(currentDate) !== -1) dateSel.value = currentDate;
 
   updateSousZoneOptions();
+=======
+  dateSel.innerHTML = '<option value="">Toutes les dates</option>' +
+    dates.map(function (d) { return '<option value="' + escapeAttr(d) + '">' + escapeHtml(d) + '</option>'; }).join('');
+  if (dates.indexOf(currentDate) !== -1) dateSel.value = currentDate;
+
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
   updateDepotOptions();
 }
 
@@ -722,8 +793,14 @@ function getLatestSnapshot(records) {
   return Object.keys(map).map(function (k) { return map[k]; });
 }
 
+<<<<<<< HEAD
 // Remplit "Sous-zone" avec uniquement celles présentes pour l'AM / la Zone choisis.
 function updateSousZoneOptions() {
+=======
+// Remplit le menu "Dépôt" avec uniquement les dépôts correspondant à l'AM et/ou
+// la Zone actuellement sélectionnés (cascade AM → Zone → Dépôt).
+function updateDepotOptions() {
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
   var am = document.getElementById('filterAM').value;
   var zone = document.getElementById('filterZone').value;
   var sousZoneSel = document.getElementById('filterSousZone');
@@ -875,12 +952,21 @@ function renderGlobalKPIs(records) {
   var nbVisites = records.length; // total des saisies (pas le snapshot) = nombre de visites
 
   var cards = [
+<<<<<<< HEAD
     { label: t('kpiVentesMTD'), value: formatFcfa(ventesGlobalMTD), sub: snapshot.length + t('subDepotsPrisEnCompte'), cls: 'card-score' },
     { label: t('kpiTargetGlobal'), value: formatFcfa(targetGlobal), sub: t('subSommeObjectifs') },
     { label: t('kpiPctReal'), value: pctRealisation !== null ? pctRealisation.toFixed(0) + '%' : '—', sub: t('subVentesTarget') },
     { label: t('kpiTauxRv'), value: tauxRevendeurs !== null ? tauxRevendeurs.toFixed(0) + '%' : '—', sub: sumRvActifs + t('subActifsTotal') + sumRvTotal + t('subTotal') },
     { label: t('kpiRecrutGlobal'), value: recrutementGlobal, sub: t('subCumulYTD') },
     { label: t('kpiNbVisites'), value: nbVisites, sub: t('subTotalSaisies') }
+=======
+    { label: 'Ventes Global MTD', value: formatFcfa(ventesGlobalMTD), sub: snapshot.length + ' dépôt(s) pris en compte', cls: 'card-score' },
+    { label: 'Target Global', value: formatFcfa(targetGlobal), sub: 'Somme des objectifs par dépôt' },
+    { label: '% Réalisation / Target', value: pctRealisation !== null ? pctRealisation.toFixed(0) + '%' : '—', sub: 'Ventes Global MTD ÷ Target Global' },
+    { label: 'Taux revendeurs actifs', value: tauxRevendeurs !== null ? tauxRevendeurs.toFixed(0) + '%' : '—', sub: sumRvActifs + ' actifs / ' + sumRvTotal + ' total' },
+    { label: 'Recrutement Global', value: recrutementGlobal, sub: 'Cumul YTD, tous dépôts' },
+    { label: 'Nombre de visites', value: nbVisites, sub: 'Total des saisies sur la période filtrée' }
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
   ];
 
   document.getElementById('kpiGridGlobal').innerHTML = cards.map(function (c) {
@@ -1131,7 +1217,11 @@ function renderVisitesAM(records) {
   var amsSorted = Object.keys(byAM).sort(function (a, b) { return byAM[b].count - byAM[a].count; });
   var tbody = document.querySelector('#tableVisitesAM tbody');
   if (!amsSorted.length) {
+<<<<<<< HEAD
     tbody.innerHTML = '<tr><td colspan="3" class="empty-state">' + t('emptyGeneric') + '</td></tr>';
+=======
+    tbody.innerHTML = '<tr><td colspan="3" class="empty-state">Pas encore de données</td></tr>';
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     return;
   }
   tbody.innerHTML = amsSorted.map(function (am) {
@@ -1185,7 +1275,11 @@ function renderClassificationTables(records) {
       '<td>' + (r.equipActif !== null ? r.equipActif : '—') + '</td>' +
       '<td>' + (r.score !== null ? r.score : '—') + ' / 60</td>' +
       '</tr>';
+<<<<<<< HEAD
   }).join('') : '<tr><td colspan="7" class="empty-state">' + t('emptyGeneric') + '</td></tr>';
+=======
+  }).join('') : '<tr><td colspan="7" class="empty-state">Pas encore de données</td></tr>';
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
 
   // Classe C & D : tous les dépôts concernés, triés du plus bas CA au plus haut
   var classCD = snapshot.filter(function (r) { return r.classe === 'C' || r.classe === 'D'; })
@@ -1201,13 +1295,18 @@ function renderClassificationTables(records) {
       '<td>' + (r.equipActif !== null ? r.equipActif : '—') + '</td>' +
       '<td>' + (r.score !== null ? r.score : '—') + ' / 60</td>' +
       '</tr>';
+<<<<<<< HEAD
   }).join('') : '<tr><td colspan="7" class="empty-state">' + t('emptyClassCD') + '</td></tr>';
+=======
+  }).join('') : '<tr><td colspan="7" class="empty-state">Aucun dépôt en classe C ou D 🎉</td></tr>';
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
 }
 
 // ── Évolution du CA MTD par dépôt (multi-lignes) ────────────────────────────
 function renderDepotEvolutionChart(records) {
   var withData = records.filter(function (r) { return r.sellinMTDFcfa !== null && r.date; });
 
+<<<<<<< HEAD
   // On cible les dépôts à FAIBLE SCORE (les plus prioritaires à surveiller),
   // pas les plus actifs — basé sur le dernier score connu de chaque dépôt.
   var snapshot = getLatestSnapshot(records);
@@ -1224,20 +1323,42 @@ function renderDepotEvolutionChart(records) {
   var allLabels = uniqueSorted(withData.map(function (r) { return r.dateLabel; }));
 
   var datasets = faibleDepots.map(function (depot, i) {
+=======
+  // Limite aux 8 dépôts ayant le plus de points, pour rester lisible
+  var countByDepot = {};
+  withData.forEach(function (r) { countByDepot[r.depot] = (countByDepot[r.depot] || 0) + 1; });
+  var topDepots = Object.keys(countByDepot).sort(function (a, b) { return countByDepot[b] - countByDepot[a]; }).slice(0, 8);
+
+  var palette = ['#0A1E5E', '#00AEEF', '#1B8A4B', '#E8A33D', '#D93025', '#2455B7', '#8E44AD', '#16A085'];
+  var allLabels = uniqueSorted(withData.map(function (r) { return r.dateLabel; }));
+
+  var datasets = topDepots.map(function (depot, i) {
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     var byDate = {};
     withData.filter(function (r) { return r.depot === depot; }).forEach(function (r) { byDate[r.dateLabel] = r.sellinMTDFcfa; });
     return {
       label: depot,
+<<<<<<< HEAD
       data: allLabels.map(function (d) { return byDate.hasOwnProperty(d) ? byDate[d] : 0; }),
       backgroundColor: palette[i % palette.length],
       borderRadius: 4
+=======
+      data: allLabels.map(function (d) { return byDate.hasOwnProperty(d) ? byDate[d] : null; }),
+      borderColor: palette[i % palette.length],
+      backgroundColor: palette[i % palette.length],
+      spanGaps: true, tension: 0.25, pointRadius: 3
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     };
   });
 
   var ctx = document.getElementById('chartDepotEvolution').getContext('2d');
   if (CHARTS.depotEvo) CHARTS.depotEvo.destroy();
   CHARTS.depotEvo = new Chart(ctx, {
+<<<<<<< HEAD
     type: 'bar',
+=======
+    type: 'line',
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
     data: { labels: allLabels, datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -1338,9 +1459,14 @@ function init() {
   document.getElementById('btnRefresh').addEventListener('click', fetchData);
   document.getElementById('btnResetFilters').addEventListener('click', function () {
     document.getElementById('filterAM').value = '';
+<<<<<<< HEAD
     document.getElementById('filterSousZone').value = '';
     document.getElementById('filterDate').value = '';
     onAMFilterChange(); // remet la liste complète des zones + sous-zones + dépôts + renderAll()
+=======
+    document.getElementById('filterDate').value = '';
+    onAMFilterChange(); // remet la liste complète des zones + dépôts + renderAll()
+>>>>>>> c52eda1500b51b58d3ceb4d46a75a659a2b67992
   });
   document.getElementById('filterAM').addEventListener('change', onAMFilterChange);
   document.getElementById('filterZone').addEventListener('change', onZoneFilterChange);
