@@ -545,9 +545,9 @@
         'Ets ASILEWO & FILS', 'Ets DEMAS AGBODRAFO', 'Ets EBENEZER',
         'Ets FUNOKO', 'Ets GERM DOSSEH', 'Ets GOD PLAN',
         'Ets LA REGENERATION', 'Ets LUMIERE COIFFURE DOVI', 'Ets LUMIERE DE L UNIVERS',
-        'Ets NADONIELA', 'Ets NADONIELLA B', 'Ets NBUKE RAMCO',
+        'Ets NADONIELLA', 'Ets NADONIELLA B', 'Ets NBUKE RAMCO',
         'Ets NOVA ELI', 'Ets PATISSERIE  MANNE DORE', 'Ets RACH MACHALLAH',
-        'Ets RAHINA SHOP', 'Ets SOVI', 'Ets YEHONAM'
+        'Ets RAHINA SHOP', 'Ets Sovi', 'Ets YEHONAM'
       ]
     },
     'ALI': {
@@ -679,6 +679,7 @@
     'SODOBEL': 'GRAND LOME',
     'SOVI': 'HEDZRANAWOE',
     'GISPA': 'TOTSI',
+    'LA MAJUSCULE': 'TOTSI',
     'ST MARTIN': 'Agoé',
     'SUPER DEPOT': 'Agoé'
   };
@@ -749,11 +750,12 @@
       body: JSON.stringify(payload)
     }).then(function(){
       setLoading(false);
-      showToast('✅ Données enregistrées dans Google Sheets !');
+      var depotSoumis = payload.nom_depot || '';
+      showToast('✅ Merci ! À la prochaine soumission pour ' + depotSoumis + '.', 'success', 3000);
       setTimeout(function(){
         localStorage.removeItem('fm_auth_role');
         location.reload();
-      }, 1200);
+      }, 2200);
     }).catch(function(){
       setLoading(false);
       showToast('❌ Erreur d\'envoi. Vérifiez votre connexion.','error',6000);
