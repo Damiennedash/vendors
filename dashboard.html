@@ -319,7 +319,7 @@ var I18N = {
     titleGlobalKPI: '📊 Indicateurs globaux',
     subGlobalKPI: '(dernier relevé de chaque dépôt — se met à jour à chaque nouvelle saisie)',
     titleVisitesAM: '🕐 Visites par AM', thNbVisites: 'Nombre de visites', thHeureMoy: 'Temps passé sur le terrain',
-    titleEvoCA: '📉 CA MTD par dépôt (triés du score le plus faible au plus élevé)',
+    titleEvoCA: '📉 CA MTD par dépôt',
     titleClassRepartition: '🏷️ Répartition par classe (CA MTD)',
     classLegend: 'Classe A : ≥ 5M Fcfa &nbsp;·&nbsp; Classe B : 2M – 5M &nbsp;·&nbsp; Classe C : 1M – 2M &nbsp;·&nbsp; Classe D : < 1M<br/>(basé sur le dernier CA MTD connu de chaque dépôt)',
     titleTop5: '🏆 Top 5 des meilleurs dépôts (CA MTD)',
@@ -357,7 +357,7 @@ var I18N = {
     titleGlobalKPI: '📊 Global Indicators',
     subGlobalKPI: '(latest reading per depot — updates with every new entry)',
     titleVisitesAM: '🕐 Visits per AM', thNbVisites: 'Number of visits', thHeureMoy: 'Time spent in the field',
-    titleEvoCA: '📉 MTD Revenue by Depot (sorted lowest to highest score)',
+    titleEvoCA: '📉 MTD Revenue by Depot',
     titleClassRepartition: '🏷️ Class Breakdown (MTD Revenue)',
     classLegend: 'Class A: ≥ 5M Fcfa &nbsp;·&nbsp; Class B: 2M – 5M &nbsp;·&nbsp; Class C: 1M – 2M &nbsp;·&nbsp; Class D: < 1M<br/>(based on the latest known MTD revenue per depot)',
     titleTop5: '🏆 Top 5 Best Depots (MTD Revenue)',
@@ -1329,16 +1329,16 @@ function renderClassificationTables(records) {
 function renderDepotEvolutionChart(records) {
   var withData = records.filter(function (r) { return r.sellinMTDFcfa !== null && r.date; });
 
-  // Tri du score le plus faible au plus élevé (les plus prioritaires en premier
-  // dans la légende), mais on affiche TOUS les dépôts ayant des données.
+  // Tri par CA MTD décroissant (du plus grand au plus petit dépôt), basé sur
+  // le dernier montant connu de chaque dépôt.
   var snapshot = getLatestSnapshot(records);
-  var scoreByDepot = {};
-  snapshot.forEach(function (r) { if (r.depot) scoreByDepot[r.depot] = (r.score !== null ? r.score : 999); });
+  var revenuByDepot = {};
+  snapshot.forEach(function (r) { if (r.depot) revenuByDepot[r.depot] = (r.sellinMTDFcfa !== null ? r.sellinMTDFcfa : 0); });
 
   var depotsPresents = uniqueSorted(withData.map(function (r) { return r.depot; }));
   var faibleDepots = depotsPresents
     .slice()
-    .sort(function (a, b) { return (scoreByDepot[a] !== undefined ? scoreByDepot[a] : 999) - (scoreByDepot[b] !== undefined ? scoreByDepot[b] : 999); });
+    .sort(function (a, b) { return (revenuByDepot[b] !== undefined ? revenuByDepot[b] : 0) - (revenuByDepot[a] !== undefined ? revenuByDepot[a] : 0); });
 
   var palette = ['#D93025', '#E8A33D', '#0A1E5E', '#00AEEF', '#2455B7', '#8E44AD', '#16A085', '#C0392B',
                  '#F39C12', '#27AE60', '#2980B9', '#9B59B6', '#E67E22', '#1ABC9C', '#C0392B', '#34495E'];
