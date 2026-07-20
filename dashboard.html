@@ -1336,7 +1336,7 @@ function renderDepotEvolutionChart(records) {
   snapshot.forEach(function (r) { if (r.depot) revenuByDepot[r.depot] = (r.sellinMTDFcfa !== null ? r.sellinMTDFcfa : 0); });
 
   var depotsPresents = uniqueSorted(withData.map(function (r) { return r.depot; }));
-  var faibleDepots = depotsPresents
+  var depotsTries = depotsPresents
     .slice()
     .sort(function (a, b) { return (revenuByDepot[b] !== undefined ? revenuByDepot[b] : 0) - (revenuByDepot[a] !== undefined ? revenuByDepot[a] : 0); });
 
@@ -1352,21 +1352,22 @@ function renderDepotEvolutionChart(records) {
     weekIndicesSet[wi] = true;
   });
   var weekIndices = Object.keys(weekIndicesSet).map(Number).sort(function (a, b) { return a - b; });
-  var allLabels = weekIndices.map(function (w) { return t('weekLabel') + ' ' + w; });
 
-  var datasets = faibleDepots.map(function (depot, i) {
-    var byWeek = {}; // wi -> dernier enregistrement (le plus récent) de ce dépôt cette semaine-là
-    withData.filter(function (r) { return r.depot === depot; }).forEach(function (r) {
-      var wi = GLOBAL_WEEK_ANCHOR ? computeWeekIndex(r.date, GLOBAL_WEEK_ANCHOR) : 1;
-      var existing = byWeek[wi];
-      if (!existing || (r.date && existing.date && r.date >= existing.date)) byWeek[wi] = r;
+  // Axe X = dépôts (triés par CA décroissant) · une série par semaine (légende)
+  var datasets = weekIndices.map(function (wi, i) {
+    var parDepot = {}; // depot -> dernier enregistrement de ce dépôt cette semaine-là
+    withData.forEach(function (r) {
+      var rwi = GLOBAL_WEEK_ANCHOR ? computeWeekIndex(r.date, GLOBAL_WEEK_ANCHOR) : 1;
+      if (rwi !== wi) return;
+      var existing = parDepot[r.depot];
+      if (!existing || (r.date && existing.date && r.date >= existing.date)) parDepot[r.depot] = r;
     });
     return {
-      label: depot,
-      data: weekIndices.map(function (wi) { return byWeek.hasOwnProperty(wi) ? byWeek[wi].sellinMTDFcfa : 0; }),
+      label: t('weekLabel') + ' ' + wi,
+      data: depotsTries.map(function (depot) { return parDepot.hasOwnProperty(depot) ? parDepot[depot].sellinMTDFcfa : 0; }),
       backgroundColor: palette[i % palette.length],
       borderRadius: 4,
-      maxBarThickness: 55 // évite une barre géante quand il n'y a qu'une seule semaine/dépôt
+      maxBarThickness: 55 // évite une barre géante quand il n'y a qu'un seul dépôt/semaine
     };
   });
 
@@ -1374,7 +1375,7 @@ function renderDepotEvolutionChart(records) {
   if (CHARTS.depotEvo) CHARTS.depotEvo.destroy();
   CHARTS.depotEvo = new Chart(ctx, {
     type: 'bar',
-    data: { labels: allLabels, datasets: datasets },
+    data: { labels: depotsTries, datasets: datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       layout: { padding: { top: 24 } },
@@ -1389,7 +1390,7 @@ function renderDepotEvolutionChart(records) {
       },
       scales: {
         y: { ticks: { callback: function (v) { return (v / 1000000).toFixed(1) + 'M'; } } },
-        x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 8 } }
+        x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 16 } }
       }
     }
   });
