@@ -1342,17 +1342,31 @@ function renderDepotEvolutionChart(records) {
 
   var palette = ['#D93025', '#E8A33D', '#0A1E5E', '#00AEEF', '#2455B7', '#8E44AD', '#16A085', '#C0392B',
                  '#F39C12', '#27AE60', '#2980B9', '#9B59B6', '#E67E22', '#1ABC9C', '#C0392B', '#34495E'];
-  var allLabels = uniqueSorted(withData.map(function (r) { return r.dateLabel; }));
+
+  // Regroupement par semaine (Semaine 1, 2, 3...) plutôt que par date exacte.
+  // S'il y a plusieurs saisies du même dépôt la même semaine, on garde la plus
+  // récente (le MTD est cumulatif, donc la dernière valeur de la semaine).
+  var weekIndicesSet = {};
+  withData.forEach(function (r) {
+    var wi = GLOBAL_WEEK_ANCHOR ? computeWeekIndex(r.date, GLOBAL_WEEK_ANCHOR) : 1;
+    weekIndicesSet[wi] = true;
+  });
+  var weekIndices = Object.keys(weekIndicesSet).map(Number).sort(function (a, b) { return a - b; });
+  var allLabels = weekIndices.map(function (w) { return t('weekLabel') + ' ' + w; });
 
   var datasets = faibleDepots.map(function (depot, i) {
-    var byDate = {};
-    withData.filter(function (r) { return r.depot === depot; }).forEach(function (r) { byDate[r.dateLabel] = r.sellinMTDFcfa; });
+    var byWeek = {}; // wi -> dernier enregistrement (le plus récent) de ce dépôt cette semaine-là
+    withData.filter(function (r) { return r.depot === depot; }).forEach(function (r) {
+      var wi = GLOBAL_WEEK_ANCHOR ? computeWeekIndex(r.date, GLOBAL_WEEK_ANCHOR) : 1;
+      var existing = byWeek[wi];
+      if (!existing || (r.date && existing.date && r.date >= existing.date)) byWeek[wi] = r;
+    });
     return {
       label: depot,
-      data: allLabels.map(function (d) { return byDate.hasOwnProperty(d) ? byDate[d] : 0; }),
+      data: weekIndices.map(function (wi) { return byWeek.hasOwnProperty(wi) ? byWeek[wi].sellinMTDFcfa : 0; }),
       backgroundColor: palette[i % palette.length],
       borderRadius: 4,
-      maxBarThickness: 55 // évite une barre géante quand il n'y a qu'une seule date/dépôt
+      maxBarThickness: 55 // évite une barre géante quand il n'y a qu'une seule semaine/dépôt
     };
   });
 
