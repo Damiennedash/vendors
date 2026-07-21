@@ -1340,8 +1340,8 @@ function renderDepotEvolutionChart(records) {
     .slice()
     .sort(function (a, b) { return (revenuByDepot[b] !== undefined ? revenuByDepot[b] : 0) - (revenuByDepot[a] !== undefined ? revenuByDepot[a] : 0); });
 
-  var palette = ['#D93025', '#E8A33D', '#0A1E5E', '#00AEEF', '#2455B7', '#8E44AD', '#16A085', '#C0392B',
-                 '#F39C12', '#27AE60', '#2980B9', '#9B59B6', '#E67E22', '#1ABC9C', '#C0392B', '#34495E'];
+  var palette = ['#2455B7', '#E8A33D', '#0A1E5E', '#00AEEF', '#1B8A4B', '#8E44AD', '#16A085', '#34495E',
+                 '#F39C12', '#27AE60', '#2980B9', '#9B59B6', '#E67E22', '#1ABC9C', '#5DADE2', '#154360'];
 
   // Regroupement par semaine (Semaine 1, 2, 3...) plutôt que par date exacte.
   // S'il y a plusieurs saisies du même dépôt la même semaine, on garde la plus
@@ -1398,7 +1398,8 @@ function renderDepotEvolutionChart(records) {
 
 // ── Tableaux d'aide à la décision ───────────────────────────────────────────
 function renderRiskTable(records) {
-  var risky = records
+  var snapshot = getLatestSnapshot(records); // 1 ligne par dépôt = son relevé le plus récent
+  var risky = snapshot
     .filter(function (r) { return r.score !== null && norm(r.mention) !== 'bon'; })
     .sort(function (a, b) { return a.score - b.score; })
     .slice(0, 10);
@@ -1425,7 +1426,8 @@ function renderRiskTable(records) {
 }
 
 function renderTopTable(records) {
-  var top = records
+  var snapshot = getLatestSnapshot(records); // 1 ligne par dépôt = son relevé le plus récent
+  var top = snapshot
     .filter(function (r) { return r.score !== null; })
     .sort(function (a, b) { return b.score - a.score; })
     .slice(0, 5);
